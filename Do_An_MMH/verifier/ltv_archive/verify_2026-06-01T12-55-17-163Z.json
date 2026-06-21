@@ -1,0 +1,10 @@
+{
+  "verify_time": "2026-06-01T12:55:17.163Z",
+  "document": "LocalSigned_1780318493100.pdf",
+  "signer": "UNKNOWN",
+  "timestamp_valid": true,
+  "ocsp_status": "REVOKED",
+  "verification_result": "REVOKED",
+  "certificate_path": "/app/ca-infrastructure/storage/keystore/citizen_officer_01.crt",
+  "reason": "Signature registry marked as revoked"
+}

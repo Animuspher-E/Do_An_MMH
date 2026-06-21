@@ -1,0 +1,35 @@
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir = /app/ca-infrastructure/ocsp
+database = $dir/index.txt
+serial = $dir/serial
+crlnumber = $dir/crlnumber
+new_certs_dir = $dir/certs
+certificate = /app/ca-infrastructure/storage/ca-authority/subCA.pem
+private_key = /app/ca-infrastructure/storage/ca-authority/subCA.key
+default_md = sha256
+default_days = 365
+policy = policy_any
+x509_extensions = usr_cert
+copy_extensions = copy
+
+[ policy_any ]
+countryName = optional
+stateOrProvinceName = optional
+localityName = optional
+organizationName = optional
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+
+[ usr_cert ]
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, nonRepudiation
+extendedKeyUsage = clientAuth, emailProtection
+
+[ ocsp ]
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature
+extendedKeyUsage = OCSPSigning

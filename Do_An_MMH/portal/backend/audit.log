@@ -1,0 +1,716 @@
+[11:35:56 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[11:36:06 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[11:36:15 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780288556300
+[11:36:30 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[11:36:47 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[11:36:59 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[11:37:06 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[11:37:10 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780288556300
+[11:37:15 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash 6c45a6a262e6cf98e75558fe79bedee507f23c2ee8e5ae394d228a58682e4ec0
+[11:37:19 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[11:37:40 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780288556300
+[11:37:45 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash 6c45a6a262e6cf98e75558fe79bedee507f23c2ee8e5ae394d228a58682e4ec0
+[11:37:50 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[11:38:03 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780288619418
+[11:38:11 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[11:42:26 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[11:46:48 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[11:46:52 1/6/2026] User: officer_01 | Action: REJECT | Info: Từ chối hồ sơ 1780288946812: bbbbbbbb
+[11:48:48 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[11:48:48 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[17:04:50 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[17:04:59 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[17:05:04 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780308290146
+[17:05:09 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[17:05:17 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[17:05:38 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[17:05:38 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[17:17:09 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[17:17:23 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780308290146
+[17:17:28 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[17:17:28 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash 9560404351894433d76abe2a0910866e75f0c31fab71b05cf34f5d536f70b8d2
+[17:17:35 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[17:17:47 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[17:17:58 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780308290146
+[17:18:02 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[17:18:02 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash 9560404351894433d76abe2a0910866e75f0c31fab71b05cf34f5d536f70b8d2
+[17:18:04 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[17:18:22 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780309029695
+[17:18:26 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[17:18:29 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[17:26:32 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[17:26:39 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[17:26:53 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780309592193
+[17:26:58 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[17:27:02 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[17:27:12 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[17:27:13 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[18:01:06 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780309592193
+[18:09:27 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[18:09:31 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780312167975
+[18:09:37 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[18:20:51 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[18:21:03 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[18:26:37 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[18:26:55 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[18:27:04 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780313197811
+[18:27:08 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[18:27:11 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[18:27:21 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[18:27:21 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[18:27:47 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[18:27:55 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[18:28:01 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780313267192
+[18:28:13 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[18:28:24 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[19:40:30 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[19:40:41 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[19:40:45 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780317630523
+[19:40:53 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[19:41:18 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[19:41:26 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[19:41:36 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[19:41:43 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780317686852
+[19:41:47 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[19:41:52 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[19:42:02 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[19:42:02 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[19:42:13 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[19:42:18 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=PENDING
+[19:42:20 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_local_sign - fileStatus=PENDING
+[19:54:32 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[19:54:41 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[19:54:44 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780318472336
+[19:54:55 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[19:55:12 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[19:55:22 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[19:55:29 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780318522148
+[19:55:34 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[19:55:38 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[19:56:02 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[19:56:08 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[19:56:13 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780318562574
+[19:56:17 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[19:56:19 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[19:56:31 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[19:56:31 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[19:56:40 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[19:56:44 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[19:56:45 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_local_sign - fileStatus=SIGNED
+[19:56:47 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[20:21:13 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[20:21:21 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[20:21:29 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_local_sign - fileStatus=PENDING
+[20:21:30 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780320073620
+[20:21:38 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[20:22:00 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[20:22:14 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[20:22:28 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[20:22:37 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[20:22:39 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780320073620
+[20:22:50 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[20:22:50 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash a02279d53347cd582c337ff7f627aa2bf65dbd739787364c11343ea301749941
+[20:22:55 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[20:23:10 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[20:23:12 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780320073620
+[20:23:17 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[20:23:17 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash a02279d53347cd582c337ff7f627aa2bf65dbd739787364c11343ea301749941
+[20:23:19 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[20:23:33 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[20:23:39 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[20:23:39 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[20:23:47 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[20:23:49 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780320213163
+[20:23:53 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[20:23:54 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[20:24:05 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[20:24:06 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[20:56:51 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[20:57:18 1/6/2026] User: 0522 0100 7777 | Action: ISSUE_LOCAL_CERT | Info: Success
+[20:58:05 1/6/2026] User: 0522 0100 7777 | Action: OPA_DECISION_DENY | Info: Không phải cán bộ có thẩm quyền
+[20:58:14 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[20:58:20 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322211824
+[20:58:31 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[20:59:26 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[20:59:38 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[20:59:42 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322211824
+[20:59:46 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[20:59:46 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash a48199af0e5c9b62e9557eec8aa4e5d090ffa3066aa2102af4e5c783ba92e18e
+[20:59:52 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[21:00:17 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322211824
+[21:00:25 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[21:00:25 1/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash a48199af0e5c9b62e9557eec8aa4e5d090ffa3066aa2102af4e5c783ba92e18e
+[21:00:27 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[21:00:41 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[21:00:41 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[21:04:56 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[21:05:01 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[21:05:06 1/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_local_sign - fileStatus=PENDING
+[21:05:08 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322696509
+[21:05:15 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[21:05:29 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[21:05:41 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[21:05:43 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322696509
+[21:05:52 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[21:06:00 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322752997
+[21:06:08 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[21:06:10 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[21:06:54 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[21:07:03 1/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[21:07:07 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322814821
+[21:07:15 1/6/2026] User: Can Bo Cong An Phuong | Action: SIGN_SUCCESS_LOCAL | Info: XacNhanCuTru_052201007777.pdf
+[21:07:22 1/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[21:07:34 1/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[21:07:42 1/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780322842284
+[21:07:46 1/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[21:07:51 1/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[21:08:14 1/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[21:08:20 1/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[05:56:26 2/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[05:56:35 2/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[05:56:41 2/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780354586113
+[05:56:46 2/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[05:56:48 2/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[05:57:06 2/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[05:57:06 2/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[06:38:45 2/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[06:38:51 2/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[06:38:59 2/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780357125806
+[06:39:02 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=afcc8ef9-2216-43af-b5e9-2b943635e7cd
+[06:39:02 2/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[06:39:05 2/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[06:39:20 2/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[06:39:20 2/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[06:39:31 2/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[06:39:34 2/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[06:39:36 2/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[06:39:39 2/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[06:54:16 2/6/2026] User: officer_01 | Action: DPOP_DENY | Info: Missing DPoP proof
+[07:00:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=f14eba81-f92e-4519-ba06-ae901ce6b231
+[07:00:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: f14eba81-f92e-4519-ba06-ae901ce6b231
+[07:35:47 2/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[07:35:53 2/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[07:35:57 2/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780360547057
+[07:36:01 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8bb691b3-f028-4983-894c-2b7ff08b5a97
+[07:36:01 2/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[07:36:04 2/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[07:36:04 2/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[12:18:36 2/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[12:18:36 2/6/2026] User: officer_01 | Action: CERT_REVOKED | Info: User Can Bo Cong An Phuong added to CRL
+[12:18:36 2/6/2026] User: officer_01 | Action: REVOKE_REMOTE_CERT | Info: Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan
+[12:18:45 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3b6ea187-b67e-4854-9a14-21ec4f253695
+[12:18:45 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3b6ea187-b67e-4854-9a14-21ec4f253695
+[12:21:47 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e1597fdd-e543-4fe9-951f-80ab1fb07ac5
+[12:21:47 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e1597fdd-e543-4fe9-951f-80ab1fb07ac5
+[12:21:47 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8f69ef40-da9c-4646-800f-6904713d89ba
+[12:21:47 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 8f69ef40-da9c-4646-800f-6904713d89ba
+[12:21:47 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=9bc629c2-9129-4eda-a3d0-c1e3732c02e9
+[12:21:47 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 9bc629c2-9129-4eda-a3d0-c1e3732c02e9
+[12:21:47 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c1935bb6-a813-40bc-a155-15b1e1d38613
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c1935bb6-a813-40bc-a155-15b1e1d38613
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b6d37f6b-1d3a-4003-a411-b9598ee739fc
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b6d37f6b-1d3a-4003-a411-b9598ee739fc
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=dbe1735a-2e42-4d1c-8f51-da6b9b00767b
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: dbe1735a-2e42-4d1c-8f51-da6b9b00767b
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c0737b06-7908-4091-9737-b1870fac6fa1
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c0737b06-7908-4091-9737-b1870fac6fa1
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=fcd94c90-7540-4d57-a13f-964127a56d5a
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: fcd94c90-7540-4d57-a13f-964127a56d5a
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=34d977c3-3c6b-46bb-8f71-1ccc200e167e
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 34d977c3-3c6b-46bb-8f71-1ccc200e167e
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=dd7a1d01-6dfb-4897-90e6-d3962a07efa7
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: dd7a1d01-6dfb-4897-90e6-d3962a07efa7
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=dcc01e49-e1de-4727-8cc0-f53e4e94c673
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: dcc01e49-e1de-4727-8cc0-f53e4e94c673
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=4aa13900-df20-4210-9ef0-9c2800fd7294
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 4aa13900-df20-4210-9ef0-9c2800fd7294
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=cc7fe654-f968-4abc-af74-82ec4ab3867c
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: cc7fe654-f968-4abc-af74-82ec4ab3867c
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=da8a0336-3a85-48e8-b4ca-e4646220be22
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: da8a0336-3a85-48e8-b4ca-e4646220be22
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=85350108-675e-44c6-a16d-3ede714de6f4
+[12:21:48 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 85350108-675e-44c6-a16d-3ede714de6f4
+[12:21:48 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=2921d57b-f3a4-4d4e-b0db-2c5a26c665b5
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 2921d57b-f3a4-4d4e-b0db-2c5a26c665b5
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b52624cb-bea1-4137-8046-b6ecc8c30b73
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b52624cb-bea1-4137-8046-b6ecc8c30b73
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d1833cc8-871e-4a23-952e-cb56d1abf55a
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d1833cc8-871e-4a23-952e-cb56d1abf55a
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=9123ec59-6078-4ecd-8cba-4bc99c7b5411
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 9123ec59-6078-4ecd-8cba-4bc99c7b5411
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=584fe384-4133-47fc-9aff-dca2defa58a3
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 584fe384-4133-47fc-9aff-dca2defa58a3
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=bc919684-13d8-49ce-a0ff-80c580e64c5b
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: bc919684-13d8-49ce-a0ff-80c580e64c5b
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=5b22409a-30fd-4bd3-908d-9b601a8da00d
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 5b22409a-30fd-4bd3-908d-9b601a8da00d
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=27ac05a4-71f3-4914-b9d3-c5bfbd7be204
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 27ac05a4-71f3-4914-b9d3-c5bfbd7be204
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ac836f98-e3dd-428c-be58-0070574d87ce
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ac836f98-e3dd-428c-be58-0070574d87ce
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c9409d17-dad2-4d90-a27f-209a6d929e9e
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c9409d17-dad2-4d90-a27f-209a6d929e9e
+[12:21:49 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=4223179f-47ab-40d0-96df-da69e37369e6
+[12:21:49 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 4223179f-47ab-40d0-96df-da69e37369e6
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b0328525-b44a-4b41-90e1-ce2ca619dac3
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b0328525-b44a-4b41-90e1-ce2ca619dac3
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=7f078270-d7de-490d-9ba9-253dd65b5fa7
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 7f078270-d7de-490d-9ba9-253dd65b5fa7
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=7218c4a9-5dd4-4490-a227-cf60e1e1155f
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 7218c4a9-5dd4-4490-a227-cf60e1e1155f
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=72afc4aa-abe2-45b8-b38f-8ea052bf8f41
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 72afc4aa-abe2-45b8-b38f-8ea052bf8f41
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e04f8b86-2509-4627-8ac0-dbb7db1889ff
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e04f8b86-2509-4627-8ac0-dbb7db1889ff
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ef833c3e-1752-40d1-bd82-3e26176cc33e
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ef833c3e-1752-40d1-bd82-3e26176cc33e
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=23265ff9-773c-4653-8cee-9d948ad76d1a
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 23265ff9-773c-4653-8cee-9d948ad76d1a
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=61baa8e9-234a-445e-b939-3db5dbadb81c
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 61baa8e9-234a-445e-b939-3db5dbadb81c
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e7c30218-55d7-4fd9-9eae-b79ee7e62c29
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e7c30218-55d7-4fd9-9eae-b79ee7e62c29
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=0770ab55-ce2d-4c69-829d-e9879bed8e42
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 0770ab55-ce2d-4c69-829d-e9879bed8e42
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3f54e67a-d420-45ca-8574-7c732b6cd63e
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3f54e67a-d420-45ca-8574-7c732b6cd63e
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=48018b46-d639-4c11-b536-78f3b5a8f7cf
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 48018b46-d639-4c11-b536-78f3b5a8f7cf
+[12:21:50 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b4bd88f2-3d9b-45c7-ae3a-5ed02c6434c8
+[12:21:50 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b4bd88f2-3d9b-45c7-ae3a-5ed02c6434c8
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=bd680a64-1feb-475e-b071-2ff1706d209b
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: bd680a64-1feb-475e-b071-2ff1706d209b
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a974237c-4096-4124-89fa-f402cfcd3bde
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: a974237c-4096-4124-89fa-f402cfcd3bde
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b0099454-5532-4064-8be1-29b1ff9e2de4
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b0099454-5532-4064-8be1-29b1ff9e2de4
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=7e15abba-2802-4183-9ce5-75525dfa48ce
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 7e15abba-2802-4183-9ce5-75525dfa48ce
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=bcc05282-6f94-4741-9bc8-bc3b160b4d54
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: bcc05282-6f94-4741-9bc8-bc3b160b4d54
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=51b7463e-b612-430d-818c-384dd0221ff5
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 51b7463e-b612-430d-818c-384dd0221ff5
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=7f4cc43d-08b5-46a0-ab0e-3a9c8e8ff8f2
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 7f4cc43d-08b5-46a0-ab0e-3a9c8e8ff8f2
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a69e056b-70a2-44e0-9553-2e3a0dca9952
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: a69e056b-70a2-44e0-9553-2e3a0dca9952
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6436202c-d076-423b-8c47-832f471cf82f
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6436202c-d076-423b-8c47-832f471cf82f
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a856b724-cea7-4d5d-9c66-9e60d81155db
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: a856b724-cea7-4d5d-9c66-9e60d81155db
+[12:21:51 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=33c0a58b-2ef9-469c-a544-8cee868cb3d3
+[12:21:51 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 33c0a58b-2ef9-469c-a544-8cee868cb3d3
+[12:29:17 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e1b79431-bce3-47c2-b412-6e67c5494aa3
+[12:29:17 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e1b79431-bce3-47c2-b412-6e67c5494aa3
+[12:29:17 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e43aa3f7-d288-446b-8e38-16165762e1ed
+[12:29:17 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e43aa3f7-d288-446b-8e38-16165762e1ed
+[12:29:17 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=4144b801-e54e-4818-b998-2f308ffc10e8
+[12:29:17 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 4144b801-e54e-4818-b998-2f308ffc10e8
+[12:29:17 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=174e6231-6da8-468b-aba7-e2c75c218614
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 174e6231-6da8-468b-aba7-e2c75c218614
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a3458548-58c1-46be-8067-188207e2f94a
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: a3458548-58c1-46be-8067-188207e2f94a
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3e963e69-8c6a-4cb0-bff1-4e0a4cfbe5c9
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3e963e69-8c6a-4cb0-bff1-4e0a4cfbe5c9
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d5703548-6daa-4d3c-bad3-a7002993dbac
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d5703548-6daa-4d3c-bad3-a7002993dbac
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3943d58b-a895-40a3-8a65-fd8209af9e1b
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3943d58b-a895-40a3-8a65-fd8209af9e1b
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=76029e1f-1ed7-4ba3-93f8-f282fe44b08c
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 76029e1f-1ed7-4ba3-93f8-f282fe44b08c
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=521631fc-b2cf-43fc-ab2b-5c013d220f89
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 521631fc-b2cf-43fc-ab2b-5c013d220f89
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d5ca96cf-9f87-4e77-9f93-f2957c7b53f8
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d5ca96cf-9f87-4e77-9f93-f2957c7b53f8
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=44282a33-8c4e-4988-ab37-2ecf2d81ebd9
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 44282a33-8c4e-4988-ab37-2ecf2d81ebd9
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=eeb8645e-dc69-4431-88df-a8e4be909227
+[12:29:18 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: eeb8645e-dc69-4431-88df-a8e4be909227
+[12:29:18 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=969b6156-233b-4b77-adf2-1199aff98c2d
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 969b6156-233b-4b77-adf2-1199aff98c2d
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=80bd78ee-65bd-4ec4-90b5-b624081a2e03
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 80bd78ee-65bd-4ec4-90b5-b624081a2e03
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=9f1d0bcf-781e-4f32-ab53-dd90b672b59a
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 9f1d0bcf-781e-4f32-ab53-dd90b672b59a
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6564e283-c202-4483-9b1e-5e547563eb21
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6564e283-c202-4483-9b1e-5e547563eb21
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=05f7fcd3-ecd3-4655-8f99-c171765fff0a
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 05f7fcd3-ecd3-4655-8f99-c171765fff0a
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=85479c6b-5548-4f41-8d52-c543701b4a59
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 85479c6b-5548-4f41-8d52-c543701b4a59
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=0ba675a8-be6f-46f5-9f03-9a93c011f3ee
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 0ba675a8-be6f-46f5-9f03-9a93c011f3ee
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=54922266-b894-4956-9198-a4dbcfe112c1
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 54922266-b894-4956-9198-a4dbcfe112c1
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=29b20c5a-5c12-438a-a356-ff019550be29
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 29b20c5a-5c12-438a-a356-ff019550be29
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ad77ae2a-1160-43c7-8e1f-d0b4de92e291
+[12:29:19 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ad77ae2a-1160-43c7-8e1f-d0b4de92e291
+[12:29:19 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ca04ff92-fca2-4b0d-b655-e5cc4227b240
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ca04ff92-fca2-4b0d-b655-e5cc4227b240
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6510380e-5b39-4bb3-a762-e0059b86bcbc
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6510380e-5b39-4bb3-a762-e0059b86bcbc
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3efd2fde-abf6-45f3-9607-0012e21c30b2
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3efd2fde-abf6-45f3-9607-0012e21c30b2
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a4546843-1a6c-4bf5-8df5-cb4fe72919a4
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: a4546843-1a6c-4bf5-8df5-cb4fe72919a4
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=2866a38c-2551-47ef-b8f8-e0e600584738
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 2866a38c-2551-47ef-b8f8-e0e600584738
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b0f5141e-5e7a-474f-84df-38e12b1b2302
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b0f5141e-5e7a-474f-84df-38e12b1b2302
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=13ed5fdc-ec90-4011-870e-02dc69d9ca54
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 13ed5fdc-ec90-4011-870e-02dc69d9ca54
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c274a9ac-2ab8-4f1f-b20c-4c7997f449dd
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c274a9ac-2ab8-4f1f-b20c-4c7997f449dd
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=4367d91f-ad1a-4191-b031-b865d860e68a
+[12:29:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 4367d91f-ad1a-4191-b031-b865d860e68a
+[12:29:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e1978c72-a9ec-4385-b027-0890b38a0599
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e1978c72-a9ec-4385-b027-0890b38a0599
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=991cf099-f536-4ba6-8552-7cfd98ed1588
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 991cf099-f536-4ba6-8552-7cfd98ed1588
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=efa4962c-646b-42a4-a87d-2d542f9ca44a
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: efa4962c-646b-42a4-a87d-2d542f9ca44a
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d6108f44-6412-4987-bb1a-e53a1b014d8c
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d6108f44-6412-4987-bb1a-e53a1b014d8c
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=7b41fbe0-8245-457a-8c5b-31341d3f1316
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 7b41fbe0-8245-457a-8c5b-31341d3f1316
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=cd25b2c8-a576-4bf6-acd5-f9aa479e7309
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: cd25b2c8-a576-4bf6-acd5-f9aa479e7309
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=99924854-fd95-4e71-b5b8-446306b6e7f1
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 99924854-fd95-4e71-b5b8-446306b6e7f1
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=34637ac0-b1be-42a9-98ed-58d4fdc26894
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 34637ac0-b1be-42a9-98ed-58d4fdc26894
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=72b4d643-3bba-46a4-9cf4-b02f1575cd9b
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 72b4d643-3bba-46a4-9cf4-b02f1575cd9b
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=aa75bcb4-52d4-4b18-9e63-7b74037b2215
+[12:29:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: aa75bcb4-52d4-4b18-9e63-7b74037b2215
+[12:29:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=fb6e408d-abc5-4a5c-b9ba-1e412bc1651e
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: fb6e408d-abc5-4a5c-b9ba-1e412bc1651e
+[12:29:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b2786aed-b9ee-449b-a2b1-a5730fc8e3ed
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b2786aed-b9ee-449b-a2b1-a5730fc8e3ed
+[12:29:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=499b9e1e-6873-4118-9c5c-3c5a8a2af18d
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 499b9e1e-6873-4118-9c5c-3c5a8a2af18d
+[12:29:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=919d04dd-1ae4-4320-b0ce-d7f15e235969
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 919d04dd-1ae4-4320-b0ce-d7f15e235969
+[12:29:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=31f6bbdb-126f-4d9d-b956-81d28eaffaca
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 31f6bbdb-126f-4d9d-b956-81d28eaffaca
+[12:29:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=17ff6ea9-05b3-4c5f-b5e1-f718fe6072b8
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 17ff6ea9-05b3-4c5f-b5e1-f718fe6072b8
+[12:29:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3782b34b-e975-4103-9e7b-b38455210e5c
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3782b34b-e975-4103-9e7b-b38455210e5c
+[12:29:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=12e9d89d-7b53-4584-a4bf-357c812236aa
+[12:29:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 12e9d89d-7b53-4584-a4bf-357c812236aa
+[12:31:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=93a912f7-3aa6-4faa-8f58-88e90de494c8
+[12:31:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 93a912f7-3aa6-4faa-8f58-88e90de494c8
+[12:31:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=76fe85cf-bff4-460e-a205-e6132614d5c6
+[12:31:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 76fe85cf-bff4-460e-a205-e6132614d5c6
+[12:31:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=579757ae-94b0-4950-94dc-727c4c32c1c9
+[12:31:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 579757ae-94b0-4950-94dc-727c4c32c1c9
+[12:31:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d3aa0b03-3093-46f6-9c08-f9aa778e45c3
+[12:31:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d3aa0b03-3093-46f6-9c08-f9aa778e45c3
+[12:31:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=2586dbea-44de-4053-a621-a84fec5b418f
+[12:31:20 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 2586dbea-44de-4053-a621-a84fec5b418f
+[12:31:20 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=19bf366c-8db4-440a-91c9-ee669f600dbf
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 19bf366c-8db4-440a-91c9-ee669f600dbf
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c4ecaf67-e5a4-4336-be38-c9f301163c9c
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c4ecaf67-e5a4-4336-be38-c9f301163c9c
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=aa14488a-6ec4-4a26-a3d6-b17b19d8b410
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: aa14488a-6ec4-4a26-a3d6-b17b19d8b410
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=88dd6349-e394-4688-9088-084b2c32c083
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 88dd6349-e394-4688-9088-084b2c32c083
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=824664e0-7708-4d6f-9b50-ee25bae68b87
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 824664e0-7708-4d6f-9b50-ee25bae68b87
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=beab3fef-529f-4665-8370-a5d2309c710a
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: beab3fef-529f-4665-8370-a5d2309c710a
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e70279e8-a897-42fd-899b-2fdb579d5530
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e70279e8-a897-42fd-899b-2fdb579d5530
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=754dc45d-a88e-4b20-8fe6-eb865cb91747
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 754dc45d-a88e-4b20-8fe6-eb865cb91747
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=1676bd02-952e-4536-9ed8-36004e5e6226
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 1676bd02-952e-4536-9ed8-36004e5e6226
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8fbda402-e6ce-487b-b4eb-70e82f09a327
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 8fbda402-e6ce-487b-b4eb-70e82f09a327
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=0f5259fe-3a8c-48f5-b398-2abaafa89d25
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 0f5259fe-3a8c-48f5-b398-2abaafa89d25
+[12:31:21 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=203d0c22-758f-4ad4-8906-3ee0cbc6ae61
+[12:31:21 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 203d0c22-758f-4ad4-8906-3ee0cbc6ae61
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=dd4727e4-d538-479a-b504-eec33d5181f7
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: dd4727e4-d538-479a-b504-eec33d5181f7
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=aefce362-3cc0-465f-ad98-f4da65d52061
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: aefce362-3cc0-465f-ad98-f4da65d52061
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=98b96162-f72e-4e2e-b2ce-b4ce42d8de5a
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 98b96162-f72e-4e2e-b2ce-b4ce42d8de5a
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=687f39e8-a449-4ef9-ae55-fce49a45fcb2
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 687f39e8-a449-4ef9-ae55-fce49a45fcb2
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=102b7a64-5b89-4c4c-8418-013fcce63bb1
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 102b7a64-5b89-4c4c-8418-013fcce63bb1
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=66d57f1f-48a0-4673-a203-829eea9ebc2d
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 66d57f1f-48a0-4673-a203-829eea9ebc2d
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=76f94b4b-0191-486b-ac70-2f3fa1ea2c21
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 76f94b4b-0191-486b-ac70-2f3fa1ea2c21
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=05092077-601f-4896-bedd-b282ea1d9fd5
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 05092077-601f-4896-bedd-b282ea1d9fd5
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c0e9e3c4-164e-4eef-8b20-f4274f40bb58
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c0e9e3c4-164e-4eef-8b20-f4274f40bb58
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b61c36f7-55b2-41e5-849f-02a81d21e621
+[12:31:22 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b61c36f7-55b2-41e5-849f-02a81d21e621
+[12:31:22 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=174ef176-2bc7-4e19-92e5-0ae036a95395
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 174ef176-2bc7-4e19-92e5-0ae036a95395
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=1b7e2787-9378-4d03-a9c9-e4286adcdc38
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 1b7e2787-9378-4d03-a9c9-e4286adcdc38
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=91616d8b-4923-4f35-85bc-2747cb8703f1
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 91616d8b-4923-4f35-85bc-2747cb8703f1
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=20aaf73f-fe96-4c63-9b97-404711751c76
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 20aaf73f-fe96-4c63-9b97-404711751c76
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b5293109-7e6a-4b5d-862d-7843739ba59e
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b5293109-7e6a-4b5d-862d-7843739ba59e
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=13595227-1ce7-44bd-837c-c8291fa26aeb
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 13595227-1ce7-44bd-837c-c8291fa26aeb
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ed4024a3-753d-45dc-ba18-f1e33bf1bd4f
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ed4024a3-753d-45dc-ba18-f1e33bf1bd4f
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=eb7d45a2-765e-4526-9712-f18f32dc4954
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: eb7d45a2-765e-4526-9712-f18f32dc4954
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8de09f35-95ed-4146-b7dc-a44faa783661
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 8de09f35-95ed-4146-b7dc-a44faa783661
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a11ac27e-37b1-4a1c-a8cb-df4adbfbfbb3
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: a11ac27e-37b1-4a1c-a8cb-df4adbfbfbb3
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=172bdcba-61b1-44e6-9130-97b4d3fa4bdc
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 172bdcba-61b1-44e6-9130-97b4d3fa4bdc
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=376d9bdf-c36e-4a1a-9f51-42c8bacd8d45
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 376d9bdf-c36e-4a1a-9f51-42c8bacd8d45
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=2ca6b632-ac46-479e-b365-d25d45045295
+[12:31:23 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 2ca6b632-ac46-479e-b365-d25d45045295
+[12:31:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b110da3a-9a8e-4c97-b2f6-2bafb7b9bd4c
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b110da3a-9a8e-4c97-b2f6-2bafb7b9bd4c
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6b2d2276-f2b6-4cb5-801a-c599ab1afb0b
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6b2d2276-f2b6-4cb5-801a-c599ab1afb0b
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c7341b57-029a-4072-a594-4ba928f904ab
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c7341b57-029a-4072-a594-4ba928f904ab
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=16053281-5840-4295-94f3-49374b81ce00
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 16053281-5840-4295-94f3-49374b81ce00
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3746b58f-77cf-4277-94de-9087e6392a42
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3746b58f-77cf-4277-94de-9087e6392a42
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=54e2c44a-7d22-4c3f-af49-8e8b92f5593d
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 54e2c44a-7d22-4c3f-af49-8e8b92f5593d
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=33aeb7c4-54f5-4bcd-86c4-f066f57a5368
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 33aeb7c4-54f5-4bcd-86c4-f066f57a5368
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=83f256a6-64b7-4663-9f2c-1fd783603e06
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 83f256a6-64b7-4663-9f2c-1fd783603e06
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=91a45e71-0471-426d-85cb-dea6ec206558
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 91a45e71-0471-426d-85cb-dea6ec206558
+[12:31:24 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d8f09e4c-c8f3-49c1-b2de-8493506ecffd
+[12:31:24 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d8f09e4c-c8f3-49c1-b2de-8493506ecffd
+[12:34:55 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d3a68aa5-a59a-4349-bf99-fb4660aa7f99
+[12:34:55 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d3a68aa5-a59a-4349-bf99-fb4660aa7f99
+[12:34:55 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=da5fc2a2-ed27-4e01-a5c1-8c6f4fc14110
+[12:34:55 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: da5fc2a2-ed27-4e01-a5c1-8c6f4fc14110
+[12:34:55 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=049e4afc-d86c-4807-b98d-65fb71bb79c2
+[12:34:55 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 049e4afc-d86c-4807-b98d-65fb71bb79c2
+[12:34:55 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=bad87313-2c14-4608-a368-82c426c26d53
+[12:34:55 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: bad87313-2c14-4608-a368-82c426c26d53
+[12:34:55 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=72382cc5-27f5-4662-b378-650af20c0940
+[12:34:55 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 72382cc5-27f5-4662-b378-650af20c0940
+[12:34:55 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=1f720037-68b1-46ef-ba75-8f7904f7a3db
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 1f720037-68b1-46ef-ba75-8f7904f7a3db
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e27f9816-eace-429c-b790-949006613f98
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e27f9816-eace-429c-b790-949006613f98
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=38771e8e-43a1-4c74-8e50-95d4b80c9a94
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 38771e8e-43a1-4c74-8e50-95d4b80c9a94
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d22cf4ca-3dab-4089-8b56-0a1c69595457
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d22cf4ca-3dab-4089-8b56-0a1c69595457
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=be09c8e2-652a-413f-985b-7c2666ccce0b
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: be09c8e2-652a-413f-985b-7c2666ccce0b
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ad98f3dc-7e83-44a0-8a86-09e12fea1815
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ad98f3dc-7e83-44a0-8a86-09e12fea1815
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=9799c34b-720c-436a-8b9c-2d04a16659ec
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 9799c34b-720c-436a-8b9c-2d04a16659ec
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=695d4a28-d64c-4f38-8336-177b7f60f0f3
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 695d4a28-d64c-4f38-8336-177b7f60f0f3
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=9c630f1a-670d-4c44-868d-870ee056736f
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 9c630f1a-670d-4c44-868d-870ee056736f
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=f89b208b-5ed6-43f9-b68e-f8630b5bf9c6
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: f89b208b-5ed6-43f9-b68e-f8630b5bf9c6
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8b37db8f-29dc-4118-9113-efaf39384967
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 8b37db8f-29dc-4118-9113-efaf39384967
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=db470f00-5469-41fa-89c4-f1cd217809e9
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: db470f00-5469-41fa-89c4-f1cd217809e9
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d7726c61-37ff-4fe5-96d5-62a893f14907
+[12:34:56 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d7726c61-37ff-4fe5-96d5-62a893f14907
+[12:34:56 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8df65c77-8b0c-4adc-b0a6-5643cdb7d2b1
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 8df65c77-8b0c-4adc-b0a6-5643cdb7d2b1
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=de2be3af-e6bf-4ef0-a3ec-66683c3dea5d
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: de2be3af-e6bf-4ef0-a3ec-66683c3dea5d
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=c6f2664b-6909-4f6d-ae1a-88ced388ce50
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: c6f2664b-6909-4f6d-ae1a-88ced388ce50
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6c1bcb5e-1442-414c-afa4-592e7cfcc7f0
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6c1bcb5e-1442-414c-afa4-592e7cfcc7f0
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=fa90e111-3843-4d3a-9d89-ab1ce0208e6a
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: fa90e111-3843-4d3a-9d89-ab1ce0208e6a
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=7aec06f6-ac98-451b-b627-f609cffbb19e
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 7aec06f6-ac98-451b-b627-f609cffbb19e
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b9474755-d5bf-41cd-b6f7-02895ccaa573
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b9474755-d5bf-41cd-b6f7-02895ccaa573
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e22015f7-4bf5-4a8a-8b37-b2bbf37f5d71
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e22015f7-4bf5-4a8a-8b37-b2bbf37f5d71
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=abf87da2-9cac-4d09-b275-c56b223a3c15
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: abf87da2-9cac-4d09-b275-c56b223a3c15
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=3b961f15-fae7-4ae6-8a8f-d588c10b006f
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 3b961f15-fae7-4ae6-8a8f-d588c10b006f
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=fe6d6657-c544-4f79-8035-6bdcb814130a
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: fe6d6657-c544-4f79-8035-6bdcb814130a
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=45f5d80d-dbe6-4f9b-b063-d2a31e299721
+[12:34:57 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 45f5d80d-dbe6-4f9b-b063-d2a31e299721
+[12:34:57 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=16d2c534-b630-4af8-b81b-7b3ef3b8ba59
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 16d2c534-b630-4af8-b81b-7b3ef3b8ba59
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ab451788-0d17-4bca-8145-da1d44b7e975
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ab451788-0d17-4bca-8145-da1d44b7e975
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d026ccd5-42af-4ebc-bb99-187d21c68186
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d026ccd5-42af-4ebc-bb99-187d21c68186
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=0c4f30e9-81f7-413c-87ed-a7652ca85954
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 0c4f30e9-81f7-413c-87ed-a7652ca85954
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e59a3ed9-6949-4d2a-98e3-048407a9ef0c
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e59a3ed9-6949-4d2a-98e3-048407a9ef0c
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b1dc1e13-a741-471b-8919-8ff27bbec85c
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b1dc1e13-a741-471b-8919-8ff27bbec85c
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=f1911a67-b70f-4768-971f-c5278b59e953
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: f1911a67-b70f-4768-971f-c5278b59e953
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=13fd7bcc-a2c1-4c7a-8897-9aed1fe920fe
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 13fd7bcc-a2c1-4c7a-8897-9aed1fe920fe
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8962585f-565b-47e1-b6c1-09af4c6dc83a
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 8962585f-565b-47e1-b6c1-09af4c6dc83a
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=f58f58fb-8e47-46f8-8d83-9d97c5e01686
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: f58f58fb-8e47-46f8-8d83-9d97c5e01686
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=7d9119ae-39c1-46b7-a61e-f3a6a8e794cb
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 7d9119ae-39c1-46b7-a61e-f3a6a8e794cb
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=4d50a270-77ca-4ae3-84f2-2014132f0ea1
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 4d50a270-77ca-4ae3-84f2-2014132f0ea1
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=53254c01-df7b-40b6-8273-acdcfe15bf7c
+[12:34:58 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 53254c01-df7b-40b6-8273-acdcfe15bf7c
+[12:34:58 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=194d7484-2643-497d-955d-be39fab6a01b
+[12:34:59 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 194d7484-2643-497d-955d-be39fab6a01b
+[12:34:59 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=95dac1bb-7b15-4e24-a98d-c61916e4f3eb
+[12:34:59 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 95dac1bb-7b15-4e24-a98d-c61916e4f3eb
+[12:34:59 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=77c46e3c-80f6-4238-873d-07ec85eeb45f
+[12:34:59 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 77c46e3c-80f6-4238-873d-07ec85eeb45f
+[12:34:59 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=5c087e90-0588-466a-a87f-01cafeecae6b
+[12:34:59 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 5c087e90-0588-466a-a87f-01cafeecae6b
+[12:34:59 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=82b144ec-10c5-4e3c-8bbf-9028d21b8a3d
+[12:34:59 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 82b144ec-10c5-4e3c-8bbf-9028d21b8a3d
+[12:34:59 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=15cc2c3d-cc8a-4249-93e6-204a6388bce1
+[12:34:59 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 15cc2c3d-cc8a-4249-93e6-204a6388bce1
+[12:34:59 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=89cf9f0c-609a-4bdf-a5ad-5903270d2bcd
+[12:34:59 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 89cf9f0c-609a-4bdf-a5ad-5903270d2bcd
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=87b2b6b3-813b-4dc6-a449-044137c02b15
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 87b2b6b3-813b-4dc6-a449-044137c02b15
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=45f07dc3-8aa2-4bfb-a89a-e4bb29e8984d
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 45f07dc3-8aa2-4bfb-a89a-e4bb29e8984d
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ba93d304-e860-4e32-9113-005e49933353
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ba93d304-e860-4e32-9113-005e49933353
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=107ff7a8-1407-4d39-b113-08c6ce2d8077
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 107ff7a8-1407-4d39-b113-08c6ce2d8077
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d361801c-bee5-4c90-9126-097573db0dd4
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d361801c-bee5-4c90-9126-097573db0dd4
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=cac745cd-f3ca-410b-a6f5-38bdf9768ec5
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: cac745cd-f3ca-410b-a6f5-38bdf9768ec5
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=d6db81e5-1676-4387-a712-4b400bd2a329
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: d6db81e5-1676-4387-a712-4b400bd2a329
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=8248846e-11c0-426d-ba61-ef88bceafdf6
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 8248846e-11c0-426d-ba61-ef88bceafdf6
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=064f5a79-5205-4f1f-8d7a-1e12a47a96bf
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 064f5a79-5205-4f1f-8d7a-1e12a47a96bf
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=1ea7daf1-003c-4587-a41d-6998f9817487
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 1ea7daf1-003c-4587-a41d-6998f9817487
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b99bc047-004c-4f99-aff4-80611597ffb3
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b99bc047-004c-4f99-aff4-80611597ffb3
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=86db77bb-989b-4591-b2e1-c3afb098d8b4
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 86db77bb-989b-4591-b2e1-c3afb098d8b4
+[12:35:33 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=197d0746-49ca-40f6-ab2b-0aadbd4f25cd
+[12:35:33 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 197d0746-49ca-40f6-ab2b-0aadbd4f25cd
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=25c64d68-de97-4d52-a838-861747ee9709
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 25c64d68-de97-4d52-a838-861747ee9709
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=98c31ef4-9e6d-4c9c-8d06-d95adcbdc9a0
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 98c31ef4-9e6d-4c9c-8d06-d95adcbdc9a0
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ba6b4c92-0d4a-4005-9088-7efede2fb2b8
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ba6b4c92-0d4a-4005-9088-7efede2fb2b8
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=5e236eea-f2f5-4432-aa0c-f5badb6b245c
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 5e236eea-f2f5-4432-aa0c-f5badb6b245c
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=39574f1a-1662-462d-96f0-dfa987aadc4e
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 39574f1a-1662-462d-96f0-dfa987aadc4e
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b3cd5168-0ba3-40be-b2b9-d3726d7e7464
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b3cd5168-0ba3-40be-b2b9-d3726d7e7464
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=fa613b27-01b4-4bfb-a9d0-03624128213e
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: fa613b27-01b4-4bfb-a9d0-03624128213e
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b4855d75-346e-472a-b2a7-aaeae900d84c
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b4855d75-346e-472a-b2a7-aaeae900d84c
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=50288ea2-efe4-4782-b478-a9107a8243e2
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 50288ea2-efe4-4782-b478-a9107a8243e2
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6393279d-8836-419a-a489-04c5d7a2ae32
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6393279d-8836-419a-a489-04c5d7a2ae32
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=5fd2a0df-e617-41e1-881d-ef83c69cd0e2
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 5fd2a0df-e617-41e1-881d-ef83c69cd0e2
+[12:35:34 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=61d380b9-36a6-4ae1-9430-75f40ab7eea6
+[12:35:34 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 61d380b9-36a6-4ae1-9430-75f40ab7eea6
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=25429a29-a1d0-4cff-9a57-06819da60e5c
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 25429a29-a1d0-4cff-9a57-06819da60e5c
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=2d7ba0d1-cb76-44bc-ba47-f33a97e364c1
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 2d7ba0d1-cb76-44bc-ba47-f33a97e364c1
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=fcf5276a-a12b-47da-b584-b832347d3953
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: fcf5276a-a12b-47da-b584-b832347d3953
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=66616a91-5992-4cb5-8949-deb85128f05e
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 66616a91-5992-4cb5-8949-deb85128f05e
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=5390f55f-e9a9-4ddb-8355-4553d3210d0c
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 5390f55f-e9a9-4ddb-8355-4553d3210d0c
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=2fc98de9-5b45-4824-99c9-f4b7c018efbf
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 2fc98de9-5b45-4824-99c9-f4b7c018efbf
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=1841c071-3e3a-4c77-ac97-f0790aa7c2c9
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 1841c071-3e3a-4c77-ac97-f0790aa7c2c9
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=9fad332e-b14f-4727-a7d4-75a6ecc9d3d4
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 9fad332e-b14f-4727-a7d4-75a6ecc9d3d4
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=ed8d0e27-eedd-4198-8081-410f5128e525
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: ed8d0e27-eedd-4198-8081-410f5128e525
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e614f662-c6e4-46d3-b4df-d67082a5c6d0
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e614f662-c6e4-46d3-b4df-d67082a5c6d0
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e286d7dc-13fa-4a22-868f-c674f9917d46
+[12:35:35 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e286d7dc-13fa-4a22-868f-c674f9917d46
+[12:35:35 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a862ed91-1352-4173-b584-817e5421ad84
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: a862ed91-1352-4173-b584-817e5421ad84
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6fe0f455-d6d1-49bb-ac80-fe533f41be98
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6fe0f455-d6d1-49bb-ac80-fe533f41be98
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=5b9c0d29-34be-4288-a180-3131000d9a18
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 5b9c0d29-34be-4288-a180-3131000d9a18
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=33d6a9dc-b598-4598-b697-30a883ee1a5d
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 33d6a9dc-b598-4598-b697-30a883ee1a5d
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=da40ed35-3074-450a-8445-6a1fb88e3896
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: da40ed35-3074-450a-8445-6a1fb88e3896
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=583c3909-81e9-4dd6-9766-d2ddf476e16d
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 583c3909-81e9-4dd6-9766-d2ddf476e16d
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=4fac5ae1-d869-4191-b9ab-6799adfc6503
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 4fac5ae1-d869-4191-b9ab-6799adfc6503
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=0f844701-5fa6-44cf-8f7e-d7206688a262
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 0f844701-5fa6-44cf-8f7e-d7206688a262
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=6c0deb12-0c5e-4e3b-a73f-b7f43e5efd87
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 6c0deb12-0c5e-4e3b-a73f-b7f43e5efd87
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=85c00f40-6b7e-45df-ad88-56923c079c94
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 85c00f40-6b7e-45df-ad88-56923c079c94
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=b3d91ff4-03ad-41cd-9461-87b541fb9858
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: b3d91ff4-03ad-41cd-9461-87b541fb9858
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=e873ce29-71f8-4409-9e8b-3b6293aab521
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: e873ce29-71f8-4409-9e8b-3b6293aab521
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=63be7284-38d4-4660-b964-a2335495fdfe
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 63be7284-38d4-4660-b964-a2335495fdfe
+[12:35:36 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=07732ff7-d90e-4f0c-b071-d5ae8631c9e1
+[12:35:36 2/6/2026] User: officer_01 | Action: REPLAY_ATTACK_BLOCKED | Info: Reused DPoP jti: 07732ff7-d90e-4f0c-b071-d5ae8631c9e1
+[13:41:10 2/6/2026] User: officer_01 | Action: ISSUE_LOCAL_CERT | Info: Success
+[13:41:44 2/6/2026] User: 0522 0100 7777 | Action: CREATE_RESIDENCE_REQUEST | Info: Tao ho so xac nhan cu tru cho Nguyễn Văn A
+[13:42:10 2/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_local_sign - fileStatus=PENDING
+[13:42:15 2/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780382504719
+[13:43:23 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=401491b5-0296-43de-881b-e0110bab2050
+[13:43:23 2/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[13:43:28 2/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf
+[14:43:13 2/6/2026] User: officer_01 | Action: ISSUE_REMOTE_CERT | Info: Success
+[14:43:20 2/6/2026] User: officer_01 | Action: OPA_DECISION_DENY | Info: OPA/Rego deny officer_remote_sign - fileStatus=SIGNED
+[14:43:22 2/6/2026] User: officer_01 | Action: APPROVE | Info: Đã duyệt hồ sơ 1780382504719
+[14:43:29 2/6/2026] User: officer_01 | Action: DPOP_ALLOW | Info: DPoP verified jti=a436ba2c-feb2-41bc-b614-2c0c0ecab027
+[14:43:29 2/6/2026] User: officer_01 | Action: OPA_DECISION_ALLOW | Info: OPA/Rego allow officer_remote_sign
+[14:43:29 2/6/2026] User: SYSTEM | Action: REVOKE_OLD_SIG | Info: Revoked old REMOTE signature for file hash 099a33bcc3d84d96bbc9937f1d73ea651a2f2d41d416a72c6f260ccabb1ee1a8
+[14:43:37 2/6/2026] User: officer_01 | Action: SIGN_SUCCESS_OFFICER_HSM | Info: XacNhanCuTru_052201007777.pdf

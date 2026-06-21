@@ -1,0 +1,10 @@
+{
+  "verify_time": "2026-06-01T12:55:50.512Z",
+  "document": "CloudSigned_1780318534882.pdf",
+  "signer": "Seal System, Organization: CongTyA, Country: VN",
+  "timestamp_valid": true,
+  "ocsp_status": "UNKNOWN",
+  "trust_chain_status": "UNKNOWN",
+  "verification_result": "VALID",
+  "certificate_path": "N/A"
+}

@@ -1,0 +1,10 @@
+{
+  "verify_time": "2026-06-02T05:29:50.549Z",
+  "document": "test.pdf",
+  "signer": "Seal System, Organization: CongTyA, Country: VN",
+  "timestamp_valid": false,
+  "ocsp_status": "UNKNOWN",
+  "trust_chain_status": "UNKNOWN",
+  "verification_result": "VALID",
+  "certificate_path": "N/A"
+}

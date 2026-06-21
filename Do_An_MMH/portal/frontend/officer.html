@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng Cán bộ - Phê duyệt & Ký số Hồ sơ Xác nhận Cư trú</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; }
+        .header { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { font-size: 18px; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 15px; }
+        .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .card h3 { color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #27ae60; font-size: 16px; }
+        .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .table th { background: #f8f9fa; padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6; color: #555; }
+        .table td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .btn { padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; text-decoration: none; display: inline-block; }
+        .btn-approve { background: #27ae60; color: white; }
+        .btn-reject { background: #e74c3c; color: white; }
+        .btn-view { background: #3498db; color: white; }
+        .btn-local { background: #f39c12; color: white; }
+        .btn-remote { background: #16a085; color: white; }
+        .btn-primary { background: #2980b9; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 13px; }
+        .form-group input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        .compare-box { display: flex; gap: 20px; margin-bottom: 20px; }
+        .compare-box > div { flex: 1; padding: 20px; border-radius: 8px; }
+        .compare-citizen { background: #fff3cd; border: 2px solid #ffc107; }
+        .compare-db { background: #d4edda; border: 2px solid #28a745; }
+        .compare-box h4 { margin-bottom: 10px; font-size: 14px; }
+        .compare-box p { font-size: 13px; margin: 5px 0; }
+        .hidden { display: none; }
+        .badge { display:inline-block; padding:5px 12px; border-radius:15px; font-size:12px; font-weight:600; }
+        .badge-pending { background:#fff3cd; color:#856404; }
+        .badge-approved { background:#d4edda; color:#155724; }
+        .badge-signed { background:#cce5ff; color:#004085; }
+        .cert-row { display:flex; gap:15px; }
+        .cert-box { flex:1; padding:15px; border-radius:8px; border:1px solid #ddd; text-align:center; font-size:13px; }
+        .note-box { background:#eaf4ff; border-left:4px solid #2980b9; padding:12px 15px; border-radius:6px; color:#345; font-size:13px; line-height:1.5; margin-bottom:15px; }
+    </style>
+</head>
+<body>
+<div class="header"><h2>CỔNG CÁN BỘ - Phê duyệt & Ký số Hồ sơ Xác nhận Cư trú</h2><span id="officerInfo"></span></div>
+<div class="container">
+    <div id="loginSection" class="card">
+        <h3>Đăng nhập Cán bộ</h3>
+        <div class="form-group"><label>Mã cán bộ</label><input type="text" id="officerId" placeholder="officer_01"></div>
+        <div class="form-group"><label>Mật khẩu</label><input type="password" id="officerPass" placeholder="456"></div>
+        <button class="btn btn-view" onclick="officerLogin()" style="width:100%; padding:12px;">ĐĂNG NHẬP</button>
+    </div>
+
+    <div id="mainSection" class="hidden">
+        <div class="card">
+            <h3>Chứng thư số Cán bộ / Cơ quan</h3>
+            <div class="note-box">
+                Cán bộ là chủ thể thực hiện phê duyệt và kích hoạt ký số. Có thể ký bằng USB Token cục bộ hoặc ký từ xa qua HSM.
+            </div>
+            <div class="cert-row">
+                <div id="status-local" class="cert-box" style="background:#fff3cd;"><b>USB Token / Local (.p12)</b><br>Đang tải...</div>
+                <div id="status-remote" class="cert-box" style="background:#fff3cd;"><b>Remote Signing / HSM</b><br>Đang tải...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Danh sách Hồ sơ Cần Xử lý</h3>
+            <table class="table">
+                <thead><tr><th>Mã HS</th><th>Họ tên</th><th>CCCD</th><th>Nơi thường trú</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody id="pendingList"><tr><td colspan="6" style="text-align:center; padding:20px;">Đang tải...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div id="detailSection" class="card hidden">
+            <h3>Thẩm định Hồ sơ</h3>
+            <div class="compare-box">
+                <div class="compare-citizen"><h4>Thông tin Hồ sơ</h4><div id="citizenData"></div></div>
+                <div class="compare-db"><h4>Thông tin Công dân</h4><div id="dbData"></div></div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-approve" style="flex:1; padding:12px; font-size:15px;" onclick="approveRequest()">DUYỆT</button>
+                <button class="btn btn-local" style="flex:1; padding:12px; font-size:15px;" onclick="signSelectedLocal()">KÝ LOCAL</button>
+                <button class="btn btn-remote" style="flex:1; padding:12px; font-size:15px;" onclick="signSelectedRemote()">KÝ REMOTE/HSM</button>
+                <button class="btn btn-reject" style="flex:1; padding:12px; font-size:15px;" onclick="rejectRequest()">TỪ CHỐI</button>
+            </div>
+            <p style="font-size:12px; color:#777; margin-top:12px;">* Cán bộ xem xét hồ sơ, phê duyệt và thực hiện ký số bằng USB Token hoặc HSM.</p>
+        </div>
+    </div>
+</div>
+
+<div id="pinModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+    <div style="background:white; padding:25px; border-radius:10px; width:350px; text-align:center;">
+        <h3 id="pinTitle">Xác thực</h3>
+        <p id="pinDesc" style="font-size:13px; color:#777;"></p>
+        <input type="password" id="pinInput" placeholder="••••••" style="width:100%; padding:12px; margin:15px 0; border:2px solid #eee; border-radius:8px; text-align:center; font-size:20px; letter-spacing:5px;">
+        <div style="display:flex; gap:10px;">
+            <button onclick="closePin()" style="flex:1; padding:12px; background:#e74c3c; color:white; border:none; border-radius:8px; cursor:pointer;">HỦY</button>
+            <button onclick="submitPin()" style="flex:1; padding:12px; background:#27ae60; color:white; border:none; border-radius:8px; cursor:pointer;">XÁC NHẬN</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentOfficer = null, currentFileId = null, currentFileInfo = null, pinCallback = null;
+
+    let dpopKeyPair = null;
+
+function base64UrlEncodeArrayBuffer(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+
+    for (const b of bytes) {
+        binary += String.fromCharCode(b);
+    }
+
+    return btoa(binary)
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
+}
+
+function base64UrlEncodeJson(obj) {
+    return btoa(JSON.stringify(obj))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
+}
+
+async function getDpopKeyPair() {
+    if (dpopKeyPair) return dpopKeyPair;
+
+    dpopKeyPair = await crypto.subtle.generateKey(
+        {
+            name: "ECDSA",
+            namedCurve: "P-256"
+        },
+        true,
+        ["sign", "verify"]
+    );
+
+    return dpopKeyPair;
+}
+
+async function createDpopProof(method, url) {
+    const keyPair = await getDpopKeyPair();
+    const publicJwk = await crypto.subtle.exportKey("jwk", keyPair.publicKey);
+
+    publicJwk.alg = "ES256";
+    publicJwk.use = "sig";
+
+    const header = {
+        typ: "dpop+jwt",
+        alg: "ES256",
+        jwk: publicJwk
+    };
+
+    const payload = {
+        htm: method.toUpperCase(),
+        htu: url,
+        iat: Math.floor(Date.now() / 1000),
+        jti: crypto.randomUUID()
+    };
+
+    const encodedHeader = base64UrlEncodeJson(header);
+    const encodedPayload = base64UrlEncodeJson(payload);
+    const signingInput = `${encodedHeader}.${encodedPayload}`;
+
+    const signature = await crypto.subtle.sign(
+        {
+            name: "ECDSA",
+            hash: "SHA-256"
+        },
+        keyPair.privateKey,
+        new TextEncoder().encode(signingInput)
+    );
+
+    const encodedSignature = base64UrlEncodeArrayBuffer(signature);
+
+    return `${signingInput}.${encodedSignature}`;
+}
+
+    async function officerLogin() {
+        const id = document.getElementById('officerId').value.trim();
+        const pass = document.getElementById('officerPass').value.trim();
+        const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: id, password: pass }) });
+        if (res.ok) {
+            currentOfficer = await res.json();
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('mainSection').classList.remove('hidden');
+            document.getElementById('officerInfo').innerText = `Cán bộ: ${currentOfficer.name}`;
+            renderCertStatus();
+            loadPendingList();
+            setInterval(loadPendingList, 3000);
+        } else { alert('Sai thông tin! (officer_01 / 456)'); }
+    }
+
+    function renderCertStatus() {
+        const sLocal = document.getElementById('status-local');
+        const sRemote = document.getElementById('status-remote');
+
+        if (!currentOfficer.hasCert) {
+            sLocal.style.background = "#fff3cd";
+            sLocal.innerHTML = "<b>USB Token / Local (.p12)</b><br>Chưa có.<br><button onclick='enrollLocal()' class='btn btn-primary' style='margin-top:8px;'>Tạo token cán bộ</button>";
+        } else {
+            sLocal.style.background = "#d4edda";
+            sLocal.innerHTML = "<b>USB Token / Local (.p12)</b><br>Đã sẵn sàng.<br><button onclick='revokeLocalCert()' class='btn btn-danger' style='margin-top:8px;'>Thu hồi</button>";
+        }
+
+        if (!currentOfficer.hasRemoteCert) {
+            sRemote.style.background = "#fff3cd";
+            sRemote.innerHTML = "<b>Remote Signing / HSM</b><br>Chưa có.<br><button onclick='enrollRemote()' class='btn btn-primary' style='margin-top:8px;'>Tạo PIN HSM</button>";
+        } else {
+            sRemote.style.background = "#d4edda";
+            sRemote.innerHTML =
+                "<b>Remote Signing / HSM</b><br>" +
+                "Đã sẵn sàng trên Server.<br>" +
+                "<button onclick='revokeRemoteCert()' class='btn btn-danger' style='margin-top:8px;'>Thu hồi</button>";
+        }
+    }
+
+    async function enrollLocal() {
+        const pin = await askPin("Tạo PIN USB Token cán bộ", "PIN này dùng để mở file .p12 khi ký Local.");
+        if (!pin) return;
+        const r = await fetch('/api/issue-cert', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId:currentOfficer.userId, userPin: pin})});
+        if (r.ok) {
+            alert("Đã tạo chứng thư Local cho cán bộ. Hãy lưu file .p12 và chọn file này khi chạy agent.py.");
+            window.location.href = "/download-cert/" + currentOfficer.userId;
+            currentOfficer.hasCert = true;
+            renderCertStatus();
+        } else alert("Không tạo được chứng thư Local.");
+    }
+
+    async function enrollRemote() {
+        const pin = await askPin("Tạo PIN HSM", "PIN này dùng để cán bộ uỷ quyền lệnh ký từ xa qua HSM.");
+        if (!pin) return;
+        const r = await fetch('/api/issue-remote-cert', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId:currentOfficer.userId, signPin: pin})});
+        if (r.ok) {
+            alert("Đã khởi tạo HSM Remote Signing cho cán bộ.");
+            currentOfficer.hasRemoteCert = true;
+            currentOfficer.signPin = pin;
+            renderCertStatus();
+        } else alert("Không tạo được HSM Remote Signing.");
+    }
+
+    async function revokeLocalCert() {
+        if (!confirm("Thu hồi chứng thư Local của cán bộ?")) return;
+        await fetch('/api/revoke-cert', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: currentOfficer.userId })});
+        currentOfficer.hasCert = false;
+        renderCertStatus();
+    }
+
+    async function revokeRemoteCert() {
+        if (!confirm("Thu hồi chứng thư Remote/HSM của cán bộ?")) return;
+
+        const res = await fetch('/api/revoke-remote-cert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: currentOfficer.userId })
+        });
+
+        if (res.ok) {
+            currentOfficer.hasRemoteCert = false;
+            currentOfficer.signPin = "";
+            renderCertStatus();
+            alert("Đã thu hồi chứng thư Remote/HSM.");
+        } else {
+            alert("Thu hồi chứng thư Remote/HSM thất bại!");
+        }
+    }
+
+    async function loadPendingList() {
+        const res = await fetch('/api/pending-requests');
+        const list = await res.json();
+        const tbody = document.getElementById('pendingList');
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Không có hồ sơ cần xử lý</td></tr>';
+            return;
+        }
+        tbody.innerHTML = list.map(item => {
+            let status = item.status === 'APPROVED'
+                ? '<span class="badge badge-approved">Đã duyệt</span>'
+                : item.status === 'SIGNED'
+                    ? '<span class="badge badge-signed">Đã ký</span>'
+                    : '<span class="badge badge-pending">Chờ duyệt</span>';
+            let actions = `<button class="btn btn-view" onclick="viewDetail('${item.fileId}')">Xem & xử lý</button>`;
+            if (item.status === 'APPROVED') {
+                actions += ` <button class="btn btn-local" onclick="quickLocal('${item.fileId}','${item.hash}')">Local</button>`;
+                actions += ` <button class="btn btn-remote" onclick="quickRemote('${item.fileId}','${item.hash}')">HSM</button>`;
+            }
+            return `<tr><td>${item.fileId}</td><td>${item.hoTen||'N/A'}</td><td>${item.cccd||'N/A'}</td><td>${item.noiThuongTru||'N/A'}</td><td>${status}</td><td>${actions}</td></tr>`;
+        }).join('');
+    }
+
+    function formatDateVN(dateStr) {
+        if (!dateStr) return 'N/A';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            const [y, m, d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
+        }
+        return dateStr;
+    }
+
+
+    async function viewDetail(fileId) {
+        currentFileId = fileId;
+        document.getElementById('detailSection').classList.remove('hidden');
+
+        const res = await fetch(`/api/file-info/${fileId}`);
+        const info = await res.json();
+        currentFileInfo = info;
+
+        document.getElementById('citizenData').innerHTML =
+            `<p><strong>Mã hồ sơ:</strong> ${currentFileId}</p>` +
+            `<p><strong>Mục đích:</strong> ${info.mucDich || 'Chưa cung cấp'}</p>` +
+            `<p><strong>Email:</strong> ${info.email || 'Chưa cung cấp'}</p>` +
+            `<p><strong>Số điện thoại:</strong> ${info.phone || 'Chưa cung cấp'}</p>` +
+            `<p><strong>Ghi chú:</strong> ${info.ghiChu || 'Không có'}</p>` +
+            `<p><strong>Ngày gửi:</strong> ${info.ngayGui || 'N/A'}</p>` +
+            `<p><strong>Trạng thái:</strong> ${info.status || 'N/A'}</p>`;
+
+        const dbRes = await fetch(`/api/citizen-lookup/${encodeURIComponent(info.cccd)}`);
+        const db = await dbRes.json();
+
+        document.getElementById('dbData').innerHTML =
+            `<p><strong>Họ tên:</strong> ${db.hoTen || info.hoTen || 'N/A'}</p>` +
+            `<p><strong>CCCD:</strong> ${db.cccd || info.cccd || 'N/A'}</p>` +
+            `<p><strong>Ngày sinh:</strong> ${formatDateVN(db.ngaySinh || info.ngaySinh)}</p>` +
+            `<p><strong>Giới tính:</strong> ${db.gioiTinh || info.gioiTinh || 'N/A'}</p>` +
+            `<p><strong>Nơi thường trú:</strong> ${db.noiThuongTru || info.noiThuongTru || 'N/A'}</p>`;
+    }
+
+    async function approveRequest() {
+        if (!currentFileId) return;
+        const res = await fetch('/api/approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fileId: currentFileId, officerId: currentOfficer.userId }) });
+        if (res.ok) {
+            alert('Đã duyệt hồ sơ. Cán bộ có thể ký số.');
+            await viewDetail(currentFileId);
+            loadPendingList();
+        }
+    }
+
+    async function rejectRequest() {
+        if (!currentFileId) return;
+        const reason = prompt('Lý do từ chối:'); if (!reason) return;
+        const res = await fetch('/api/reject', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fileId: currentFileId, officerId: currentOfficer.userId, reason }) });
+        if (res.ok) { alert('Từ chối hồ sơ!'); document.getElementById('detailSection').classList.add('hidden'); loadPendingList(); }
+    }
+
+    async function signSelectedLocal() {
+    if (!currentFileId) return alert("Chưa chọn hồ sơ.");
+
+    const policyRes = await fetch('/api/check-officer-sign-policy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            fileId: currentFileId,
+            officerId: currentOfficer.userId,
+            signType: "LOCAL"
+        })
+    });
+
+    const policy = await policyRes.json();
+
+    if (!policyRes.ok || policy.status !== "OK") {
+        return alert(policy.message || "Hồ sơ phải được duyệt trước khi ký.");
+    }
+
+    return signLocal(currentFileId, currentFileInfo.hash);
+}
+
+    async function signSelectedRemote() {
+    if (!currentFileId) return alert("Chưa chọn hồ sơ.");
+
+    const policyRes = await fetch('/api/check-officer-sign-policy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            fileId: currentFileId,
+            officerId: currentOfficer.userId,
+            signType: "REMOTE"
+        })
+    });
+
+    const policy = await policyRes.json();
+
+    if (!policyRes.ok || policy.status !== "OK") {
+        return alert(policy.message || "Hồ sơ phải được duyệt trước khi ký.");
+    }
+
+    return signRemote(currentFileId, currentFileInfo.hash);
+}
+
+    async function quickLocal(fileId, fileHash) { return signLocal(fileId, fileHash); }
+    async function quickRemote(fileId, fileHash) { return signRemote(fileId, fileHash); }
+
+    async function signLocal(fileId, fileHash) {
+        try {
+            const resAg = await fetch('http://localhost:5000/sign-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ documentHash: fileHash, fileName: 'HoSoXacNhanCuTru.pdf', fileId })
+            });
+            const final = await resAg.json();
+            if (final.status === 'SUCCESS') {
+                alert("Cán bộ đã ký Local thành công! Kết quả đã được trả về cổng Công dân.");
+                loadPendingList();
+                if (currentFileId) await viewDetail(currentFileId);
+            } else if (final.status !== 'CANCELLED') {
+                alert("Lỗi: " + (final.message || "Ký Local thất bại!"));
+            }
+        } catch(e) {
+            alert("Không thể kết nối Agent Python ở port 5000. Hãy chạy: python agent.py");
+        }
+    }
+
+    async function signRemote(fileId, fileHash) {
+    const pin = await askPin(
+        "Ký Remote/HSM",
+        "Nhập PIN HSM của cán bộ."
+    );
+
+    if (!pin) return;
+
+    const remoteSignUrl =
+        `${window.location.origin}/api/officer-remote-sign`;
+
+    const dpopProof =
+        await createDpopProof("POST", remoteSignUrl);
+
+    const res = await fetch('/api/officer-remote-sign', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'DPoP': dpopProof
+        },
+        body: JSON.stringify({
+            fileId,
+            officerId: currentOfficer.userId,
+            hsmPin: pin
+        })
+    });
+
+    const final = await res.json();
+
+    if (final.status === 'SUCCESS') {
+        alert(
+            "Cán bộ đã ký Remote/HSM thành công! Kết quả đã được trả về cổng Công dân."
+        );
+
+        loadPendingList();
+
+        if (currentFileId) {
+            await viewDetail(currentFileId);
+        }
+
+    } else {
+        alert("Lỗi: " + final.message);
+    }
+}
+
+    function askPin(title, desc) {
+        document.getElementById('pinTitle').innerText = title;
+        document.getElementById('pinDesc').innerText = desc;
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinModal').style.display = 'flex';
+        return new Promise(resolve => { pinCallback = resolve; });
+    }
+    function submitPin() {
+        const val = document.getElementById('pinInput').value;
+        document.getElementById('pinModal').style.display = 'none';
+        if (pinCallback) pinCallback(val);
+    }
+    function closePin() {
+        document.getElementById('pinModal').style.display = 'none';
+        if (pinCallback) pinCallback(null);
+    }
+</script>
+</body>
+</html>

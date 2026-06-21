@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng Dịch vụ Công - Xác nhận Thông tin Cư trú</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; }
+        .header { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { font-size: 18px; }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 15px; }
+        .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .card h3 { color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3498db; font-size: 16px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 13px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; }
+        .form-group input[readonly] { background:#f3f5f7; color:#555; cursor:not-allowed; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+        .btn { padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #2980b9; color: white; }
+        .btn-block { width: 100%; padding: 12px; font-size: 16px; }
+        .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .table th { background: #f8f9fa; padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6; color: #555; }
+        .table td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .badge { display: inline-block; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-approved { background: #d4edda; color: #155724; }
+        .badge-rejected { background: #f8d7da; color: #721c24; }
+        .badge-signed { background: #cce5ff; color: #004085; }
+        .note-box { background:#eaf4ff; border-left:4px solid #2980b9; padding:12px 15px; border-radius:6px; color:#345; font-size:13px; line-height:1.5; margin-bottom:15px; }
+        .section-title { margin: 5px 0 15px; color:#1a5276; font-size:14px; font-weight:700; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2>Cổng Dịch vụ Công - Xác nhận Thông tin Cư trú</h2>
+    <span id="userDisplay"></span>
+</div>
+
+<div class="container">
+
+    <div id="loginSection" class="card">
+        <h3>Đăng nhập Công dân</h3>
+        <div class="form-group"><label>Số CCCD</label><input type="text" id="loginId" placeholder="Nhập số CCCD"></div>
+        <div class="form-group"><label>Mật khẩu</label><input type="password" id="loginPass" placeholder="Nhập mật khẩu"></div>
+        <button class="btn btn-primary btn-block" onclick="login()">ĐĂNG NHẬP</button>
+    </div>
+
+    <div id="mainSection" class="hidden">
+        <div class="card">
+            <h3>Quy trình xử lý hồ sơ</h3>
+            <div class="note-box">
+                Công dân đăng nhập bằng tài khoản định danh. Các thông tin định danh được lấy từ CSDL dân cư mô phỏng và không cho chỉnh sửa. Công dân chỉ gửi yêu cầu xác nhận thông tin cư trú; cán bộ thẩm định, phê duyệt và ký số bằng USB Token hoặc ký từ xa qua HSM.
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Tạo Yêu cầu Xác nhận Thông tin Cư trú</h3>
+
+            <div class="section-title">I. Thông tin định danh từ CSDL dân cư</div>
+            <div class="form-row">
+                <div class="form-group"><label>Họ và tên</label><input type="text" id="hoTen" readonly></div>
+                <div class="form-group"><label>Số CCCD</label><input type="text" id="cccd" readonly></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Ngày sinh</label><input type="date" id="ngaySinh" readonly></div>
+                <div class="form-group"><label>Giới tính</label><input type="text" id="gioiTinh" readonly></div>
+            </div>
+            <div class="form-group"><label>Nơi thường trú</label><input type="text" id="noiThuongTru" readonly></div>
+
+            <div class="section-title">II. Thông tin yêu cầu xác nhận cư trú</div>
+            <div class="form-group">
+                <label>Mục đích sử dụng</label>
+                <select id="mucDich">
+                    <option value="Vay vốn ngân hàng">Vay vốn ngân hàng</option>
+                    <option value="Đăng ký kết hôn">Đăng ký kết hôn</option>
+                    <option value="Xin việc">Xin việc</option>
+                    <option value="Làm hồ sơ hành chính khác">Làm hồ sơ hành chính khác</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Email liên hệ</label><input type="email" id="email" placeholder="email@example.com"></div>
+                <div class="form-group"><label>Số điện thoại liên hệ</label><input type="text" id="phone" placeholder="09xxxxxxxx"></div>
+            </div>
+            <div class="form-group"><label>Ghi chú</label><textarea id="ghiChu" rows="3" placeholder="Thông tin bổ sung nếu có"></textarea></div>
+
+            <button class="btn btn-primary btn-block" onclick="taoYeuCau()">GỬI YÊU CẦU XÁC NHẬN CƯ TRÚ</button>
+        </div>
+
+        <div class="card">
+            <h3>Hồ sơ của tôi</h3>
+            <table class="table" id="myRequestsTable">
+                <thead><tr><th>Mã HS</th><th>Tên file</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody id="myRequestsBody">
+                    <tr><td colspan="4" style="text-align:center; padding:20px; color:#999;">Đang tải danh sách hồ sơ...</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:11px; color:#999; margin-top:10px;">* Bảng tự động cập nhật sau mỗi 3 giây.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let autoRefreshInterval = null;
+
+    function fillCitizenProfile() {
+        document.getElementById('hoTen').value = currentUser.hoTen || currentUser.name || '';
+        document.getElementById('cccd').value = currentUser.cccd || currentUser.userId || '';
+        document.getElementById('ngaySinh').value = currentUser.ngaySinh || '';
+        document.getElementById('gioiTinh').value = currentUser.gioiTinh || '';
+        document.getElementById('noiThuongTru').value = currentUser.noiThuongTru || '';
+        document.getElementById('email').value = currentUser.email || '';
+        document.getElementById('phone').value = currentUser.phone || '';
+        document.getElementById('ghiChu').value = '';
+    }
+
+    async function login() {
+        const id = document.getElementById('loginId').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        if (!id || !pass) return alert('Vui lòng nhập đầy đủ thông tin!');
+        const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: id, password: pass }) });
+        if (res.ok) {
+            currentUser = await res.json();
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('mainSection').classList.remove('hidden');
+            document.getElementById('userDisplay').innerHTML = `${currentUser.hoTen || currentUser.name} (CCCD: ${currentUser.cccd || currentUser.userId}) | <a href="#" onclick="logout()" style="color:white;">Đăng xuất</a>`;
+            fillCitizenProfile();
+            startAutoRefresh();
+        } else { alert('Sai CCCD hoặc mật khẩu!'); }
+    }
+
+    function logout() {
+        if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+        currentUser = null;
+        document.getElementById('loginSection').classList.remove('hidden');
+        document.getElementById('mainSection').classList.add('hidden');
+        document.getElementById('userDisplay').innerHTML = '';
+    }
+
+    async function taoYeuCau() {
+        if (!currentUser) return alert('Vui lòng đăng nhập!');
+        const data = {
+            userId: currentUser.userId,
+            mucDich: document.getElementById('mucDich').value,
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            ghiChu: document.getElementById('ghiChu').value.trim()
+        };
+
+        if (!data.mucDich) return alert('Vui lòng chọn mục đích sử dụng!');
+
+        try {
+            const res = await fetch('/api/create-ct07', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert('Hồ sơ đã được gửi! Vui lòng chờ Cán bộ thẩm định, phê duyệt và ký số.');
+                document.getElementById('ghiChu').value = '';
+                loadMyRequests();
+            } else {
+                const err = await res.json().catch(() => ({}));
+                alert('Lỗi khi tạo hồ sơ! ' + (err.message || ''));
+            }
+        } catch (e) {
+            alert('Lỗi kết nối đến Server!');
+        }
+    }
+
+    function startAutoRefresh() {
+        if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+        loadMyRequests();
+        autoRefreshInterval = setInterval(loadMyRequests, 3000);
+    }
+
+    async function loadMyRequests() {
+        const tbody = document.getElementById('myRequestsBody');
+        if (!currentUser) return;
+        try {
+            const res = await fetch(`/api/my-requests/${encodeURIComponent(currentUser.userId)}`);
+            if (!res.ok) throw new Error('Lỗi mạng');
+            const requests = await res.json();
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#999;">Chưa có hồ sơ nào. Hãy tạo hồ sơ mới.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = requests.map(item => {
+                let statusText = '', actionButtons = '';
+                if (item.status === 'PENDING') {
+                    statusText = '<span class="badge badge-pending">Chờ duyệt</span>';
+                    actionButtons = '<span style="color:#999; font-size:12px;">Đang chờ cán bộ thẩm định...</span>';
+                } else if (item.status === 'APPROVED') {
+                    statusText = '<span class="badge badge-approved">Đã duyệt</span>';
+                    actionButtons = '<span style="color:#999; font-size:12px;">Đang chờ cán bộ ký số...</span>';
+                } else if (item.status === 'REJECTED') {
+                    statusText = '<span class="badge badge-rejected">Từ chối</span>';
+                    actionButtons = `<span style="color:#999; font-size:12px;">Lý do: ${item.rejectReason||'Không rõ'}</span>`;
+                } else if (item.status === 'SIGNED') {
+                    statusText = '<span class="badge badge-signed">Đã ký số</span>';
+                    actionButtons = `
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <a href="${item.downloadUrl}" class="btn btn-primary" title="Tải tài liệu PDF đã ký số tích hợp">PDF đã ký</a>
+                            <a href="${item.downloadUrlSig}" class="btn" style="background: #7f8c8d; color: white;" title="Tải file chữ ký số rời dạng .sig">Chữ ký rời (.sig)</a>
+                        </div>
+                    `;
+                }
+                return `<tr><td>${item.fileId}</td><td>${item.fileName}</td><td>${statusText}</td><td>${actionButtons}</td></tr>`;
+            }).join('');
+        } catch (e) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#e74c3c;">Lỗi tải dữ liệu.</td></tr>';
+        }
+    }
+</script>
+</body>
+</html>
