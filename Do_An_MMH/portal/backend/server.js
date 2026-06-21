@@ -28,6 +28,7 @@ try {
 const Module = graphene ? graphene.Module : null;
 
 const app = express();
+app.enable('trust proxy');
 const port = 3000;
 
 // Thiết lập môi trường cho SoftHSM2
@@ -325,7 +326,10 @@ async function callOPA(input) {
 }
 
 function getRequestUrlForDpop(req) {
-    return `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.headers['x-forwarded-host'] || req.get('host');
+    const pathOnly = req.originalUrl.split('?')[0];
+    return `${protocol}://${host}${pathOnly}`;
 }
 
 async function requireDPoP(req, res, next) {
