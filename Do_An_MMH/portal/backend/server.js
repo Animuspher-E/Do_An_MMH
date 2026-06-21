@@ -1441,6 +1441,28 @@ app.post('/api/verify-signature', async (req, res) => {
             cached.status = "SIGNED";
             cached.signedBy = userId;
             cached.signType = "LOCAL";
+            cached.downloadUrl = `/download-signed/${signedFileName}`;
+            cached.downloadUrlSig = downloadUrlSig;
+
+            globalSignedHistory.unshift({
+                fileName: cached.name,
+                signer: userName,
+                time: nowVN(),
+                url: `/download-signed/${signedFileName}`
+            });
+
+            logAudit(userName, "SIGN_SUCCESS_LOCAL", cached.name);
+
+            res.json({
+                status: 'SUCCESS',
+                fileId,
+                downloadUrl: `/download-signed/${signedFileName}`,
+                downloadUrlSig
+            });
+        } else res.json({ status: 'FAILED', message: "Chữ ký giả mạo!" });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 async function verifyPdfPath(pdfPath, originalName) {
     let pythonOut = "";
     try {
