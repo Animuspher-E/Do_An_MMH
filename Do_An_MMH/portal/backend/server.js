@@ -9,6 +9,7 @@ const { execSync } = require('child_process');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const { checkOCSP } = require('../../verifier/ocspVerifier');
 const QRCode = require('qrcode');
+const sqlite3 = require('sqlite3').verbose();
 
 let jose;
 async function getJose() {
@@ -58,7 +59,7 @@ app.use((req, res, next) => {
 });
 
 // ==========================================
-// 1. KHỞI TẠO CẤU TRÚC THƯ MỤC
+// 1. KHỞI TẠO CẤU TRÚC THƯ MỤC & DATABASE
 // ==========================================
 const KEYSTORE_DIR = path.join(__dirname, '../../ca-infrastructure/storage/keystore');
 const CA_DIR = path.join(__dirname, '../../ca-infrastructure/storage/ca-authority');
@@ -67,7 +68,7 @@ const HISTORY_DIR = path.join(KEYSTORE_DIR, 'history');
 const REMOTE_KEYS_DIR = path.join(KEYSTORE_DIR, 'remote_keys');
 const LTV_ARCHIVE_DIR = path.join(__dirname, '../../verifier/ltv_archive');
 const CRL_FILE = path.join(KEYSTORE_DIR, 'crl.json');
-const REGISTRY_FILE = path.join(__dirname, 'signatureRegistry.json');
+const DB_FILE = path.join(__dirname, 'database.sqlite');
 
 [KEYSTORE_DIR, CA_DIR, SIGNED_DIR, HISTORY_DIR, REMOTE_KEYS_DIR, LTV_ARCHIVE_DIR].forEach(dir => {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -76,6 +77,198 @@ const REGISTRY_FILE = path.join(__dirname, 'signatureRegistry.json');
 if (!fs.existsSync(CRL_FILE)) fs.writeFileSync(CRL_FILE, JSON.stringify([]));
 
 const upload = multer({ storage: multer.memoryStorage() });
+
+// Thiết lập kết nối SQLite
+const db = new sqlite3.Database(DB_FILE);
+
+const dbRun = (query, params = []) => new Promise((resolve, reject) => {
+    db.run(query, params, function(err) {
+        if (err) reject(err);
+        else resolve(this);
+    });
+});
+
+const dbGet = (query, params = []) => new Promise((resolve, reject) => {
+    db.get(query, params, (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+    });
+});
+
+const dbAll = (query, params = []) => new Promise((resolve, reject) => {
+    db.all(query, params, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+    });
+});
+
+async function initDatabase() {
+    await dbRun(`
+        CREATE TABLE IF NOT EXISTS users (
+            userId TEXT PRIMARY KEY,
+            role TEXT,
+            name TEXT,
+            password TEXT,
+            hasCert INTEGER DEFAULT 0,
+            p12Path TEXT,
+            hasRemoteCert INTEGER DEFAULT 0,
+            signPin TEXT,
+            remoteKeyPath TEXT,
+            remoteCrtPath TEXT,
+            certPin TEXT,
+            hoTen TEXT,
+            cccd TEXT,
+            ngaySinh TEXT,
+            gioiTinh TEXT,
+            noiThuongTru TEXT,
+            email TEXT,
+            phone TEXT
+        )
+    `);
+
+    await dbRun(`
+        CREATE TABLE IF NOT EXISTS pdf_cache (
+            fileId TEXT PRIMARY KEY,
+            buffer BLOB,
+            name TEXT,
+            hash TEXT,
+            ownerId TEXT,
+            status TEXT,
+            hoTen TEXT,
+            cccd TEXT,
+            noiThuongTru TEXT,
+            ngayGui TEXT,
+            downloadUrl TEXT,
+            downloadUrlSig TEXT,
+            approvedBy TEXT,
+            approvedAt TEXT,
+            rejectedBy TEXT,
+            rejectReason TEXT,
+            rejectedAt TEXT,
+            signedBy TEXT,
+            signType TEXT,
+            mucDich TEXT,
+            email TEXT,
+            phone TEXT,
+            ghiChu TEXT
+        )
+    `);
+
+    await dbRun(`
+        CREATE TABLE IF NOT EXISTS signature_registry (
+            fileId TEXT PRIMARY KEY,
+            signatureId TEXT,
+            userId TEXT,
+            timestamp TEXT,
+            signature TEXT,
+            fileHash TEXT,
+            revoked INTEGER DEFAULT 0,
+            type TEXT,
+            certificatePEM TEXT,
+            signerCertPath TEXT
+        )
+    `);
+
+    const count = await dbGet("SELECT COUNT(*) as count FROM users");
+    if (count.count === 0) {
+        const defaultUsers = [
+            ["officer_01", "OFFICER", "Can Bo Cong An Phuong", "456", 0, "", 0, "", "", "", "", "Can Bo Cong An Phuong", "", "", "", "", "", ""],
+            ["0522 0100 7777", "Citizen", "Nguyễn Văn A", "123456", 0, "", 0, "", "", "", "", "Nguyễn Văn A", "0522 0100 7777", "2003-04-15", "Nam", "123k Lê Lợi, Phường Linh Trung, TP. Thủ Đức", "nguyenvana@example.com", "0901234567"],
+            ["0522 0100 8888", "Citizen", "Trần Thị B", "123456", 0, "", 0, "", "", "", "", "Trần Thị B", "0522 0100 8888", "2003-09-20", "Nu", "456 Nguyễn Huệ, Phường Linh Chiểu, TP. Thủ Đức", "tranthib@example.com", "0912345678"]
+        ];
+
+        for (const u of defaultUsers) {
+            await dbRun(`
+                INSERT INTO users (
+                    userId, role, name, password, hasCert, p12Path, hasRemoteCert, 
+                    signPin, remoteKeyPath, remoteCrtPath, certPin, hoTen, cccd, 
+                    ngaySinh, gioiTinh, noiThuongTru, email, phone
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, u);
+        }
+        console.log("Seeded default users to SQLite database.");
+    }
+}
+
+// Khởi chạy đồng bộ hóa DB khi start
+initDatabase().catch(err => console.error("Lỗi khởi tạo DB:", err));
+
+async function getUser(userId) {
+    const u = await dbGet("SELECT * FROM users WHERE userId = ?", [userId]);
+    if (u) {
+        u.hasCert = !!u.hasCert;
+        u.hasRemoteCert = !!u.hasRemoteCert;
+    }
+    return u;
+}
+
+async function updateUser(userId, fields) {
+    const keys = Object.keys(fields);
+    const values = Object.values(fields);
+    const setClause = keys.map(k => `${k} = ?`).join(', ');
+    await dbRun(`UPDATE users SET ${setClause} WHERE userId = ?`, [...values, userId]);
+}
+
+async function getCachedFile(fileId) {
+    const row = await dbGet("SELECT * FROM pdf_cache WHERE fileId = ?", [fileId]);
+    return row;
+}
+
+async function saveCachedFile(fileId, fileData) {
+    const existing = await getCachedFile(fileId);
+    const keys = Object.keys(fileData);
+    const values = Object.values(fileData);
+    
+    if (existing) {
+        const setClause = keys.map(k => `${k} = ?`).join(', ');
+        await dbRun(`UPDATE pdf_cache SET ${setClause} WHERE fileId = ?`, [...values, fileId]);
+    } else {
+        const columns = ['fileId', ...keys].join(', ');
+        const placeholders = ['?', ...keys.map(() => '?')].join(', ');
+        await dbRun(`INSERT INTO pdf_cache (${columns}) VALUES (${placeholders})`, [fileId, ...values]);
+    }
+}
+
+async function getSignature(fileId) {
+    const row = await dbGet("SELECT * FROM signature_registry WHERE fileId = ?", [fileId]);
+    if (row) {
+        row.revoked = row.revoked === 1;
+    }
+    return row;
+}
+
+async function saveSignature(fileId, sigData) {
+    const existing = await getSignature(fileId);
+    const fields = {
+        signatureId: sigData.signatureId,
+        userId: sigData.userId,
+        timestamp: sigData.timestamp,
+        signature: sigData.signature,
+        fileHash: sigData.fileHash,
+        revoked: sigData.revoked ? 1 : 0,
+        type: sigData.type,
+        certificatePEM: sigData.certificatePEM || null,
+        signerCertPath: sigData.signerCertPath || null
+    };
+    
+    if (existing) {
+        const keys = Object.keys(fields);
+        const values = Object.values(fields);
+        const setClause = keys.map(k => `${k} = ?`).join(', ');
+        await dbRun(`UPDATE signature_registry SET ${setClause} WHERE fileId = ?`, [...values, fileId]);
+    } else {
+        const keys = Object.keys(fields);
+        const values = Object.values(fields);
+        const columns = ['fileId', ...keys].join(', ');
+        const placeholders = ['?', ...keys.map(() => '?')].join(', ');
+        await dbRun(`INSERT INTO signature_registry (${columns}) VALUES (${placeholders})`, [fileId, ...values]);
+    }
+}
+
+async function revokeOldSignatures(fileHash, signType) {
+    await dbRun("UPDATE signature_registry SET revoked = 1 WHERE fileHash = ? AND type = ?", [fileHash, signType]);
+    logAudit("SYSTEM", "REVOKE_OLD_SIG", `Revoked old ${signType} signature for file hash ${fileHash}`);
+}
 
 function nowVN() {
     return new Date().toLocaleString('vi-VN', {
@@ -90,86 +283,19 @@ function formatDateVN(dateStr) {
     return `${d}/${m}/${y}`;
 }
 
-// ==========================================
-// 2. CƠ SỞ DỮ LIỆU & CACHE
-// ==========================================
-const users = {
-    "officer_01": {
-        role: "OFFICER",
-        name: "Can Bo Cong An Phuong",
-        password: "456",
-        hasCert: false,
-        p12Path: "",
-        hasRemoteCert: false,
-        signPin: "",
-        remoteKeyPath: "",
-        remoteCrtPath: ""
-    },
-    "0522 0100 7777": {
-        role: "Citizen",
-        name: "Nguyễn Văn A",
-        hoTen: "Nguyễn Văn A",
-        cccd: "0522 0100 7777",
-        ngaySinh: "2003-04-15",
-        gioiTinh: "Nam",
-        noiThuongTru: "123 Lê Lợi, Phường Linh Trung, TP. Thủ Đức",
-        email: "nguyenvana@example.com",
-        phone: "0901234567",
-        password: "123456",
-        hasCert: false,
-        p12Path: "",
-        hasRemoteCert: false,
-        signPin: "",
-        remoteKeyPath: "",
-        remoteCrtPath: ""
-    },
-    "0522 0100 8888": {
-        role: "Citizen",
-        name: "Trần Thị B",
-        hoTen: "Trần Thị B",
-        cccd: "0522 0100 8888",
-        ngaySinh: "2003-09-20",
-        gioiTinh: "Nu",
-        noiThuongTru: "456 Nguyễn Huệ, Phường Linh Chiểu, TP. Thủ Đức",
-        email: "tranthib@example.com",
-        phone: "0912345678",
-        password: "123456",
-        hasCert: false,
-        p12Path: "",
-        hasRemoteCert: false,
-        signPin: "",
-        remoteKeyPath: "",
-        remoteCrtPath: ""
-    }
-};
-
-let signatureRegistry = {};
-let pdfCache = {};
 let globalSignedHistory = [];
 let nonceCache = new Set();
-
 let dpopJtiCache = new Map();
 
 function cleanupDpopJtiCache() {
     const now = Date.now();
-
     for (const [jti, expiresAt] of dpopJtiCache.entries()) {
         if (expiresAt <= now) {
             dpopJtiCache.delete(jti);
         }
     }
 }
-
 setInterval(cleanupDpopJtiCache, 60 * 1000);
-
-if (fs.existsSync(REGISTRY_FILE)) {
-    try { signatureRegistry = JSON.parse(fs.readFileSync(REGISTRY_FILE)); }
-    catch (e) { signatureRegistry = {}; }
-}
-
-function saveRegistry() {
-    fs.writeFileSync(REGISTRY_FILE, JSON.stringify(signatureRegistry, null, 2));
-}
 
 function logAudit(userId, action, details) {
     const logEntry = `[${nowVN()}] User: ${userId} | Action: ${action} | Info: ${details}\n`;
@@ -180,7 +306,6 @@ function logAudit(userId, action, details) {
 async function callOPA(input) {
     try {
         const opaUrl = process.env.OPA_URL || "http://localhost:8181";
-
         const response = await fetch(`${opaUrl}/v1/data/nt219/authz/allow`, {
             method: "POST",
             headers: {
@@ -188,9 +313,7 @@ async function callOPA(input) {
             },
             body: JSON.stringify({ input })
         });
-
         const data = await response.json();
-
         return data.result === true;
     } catch (e) {
         console.error("[OPA] Error:", e.message);
@@ -205,177 +328,76 @@ function getRequestUrlForDpop(req) {
 async function requireDPoP(req, res, next) {
     try {
         const dpopProof = req.headers['dpop'];
-
         if (!dpopProof) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                "Missing DPoP proof"
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "DPoP proof is required."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", "Missing DPoP proof");
+            return res.status(401).json({ status: "FAILED", message: "DPoP proof is required." });
         }
 
         const parts = dpopProof.split('.');
         if (parts.length !== 3) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                "Invalid DPoP JWT format"
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "Invalid DPoP proof format."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", "Invalid DPoP JWT format");
+            return res.status(401).json({ status: "FAILED", message: "Invalid DPoP proof format." });
         }
 
-        const headerJson = JSON.parse(
-            Buffer.from(parts[0], 'base64url').toString('utf8')
-        );
-
+        const headerJson = JSON.parse(Buffer.from(parts[0], 'base64url').toString('utf8'));
         if (headerJson.typ !== "dpop+jwt") {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                "Invalid DPoP typ"
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "Invalid DPoP typ."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", "Invalid DPoP typ");
+            return res.status(401).json({ status: "FAILED", message: "Invalid DPoP typ." });
         }
 
         if (!headerJson.jwk) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                "Missing DPoP public JWK"
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "Missing DPoP public JWK."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", "Missing DPoP public JWK");
+            return res.status(401).json({ status: "FAILED", message: "Missing DPoP public JWK." });
         }
 
         const { jwtVerify, importJWK, calculateJwkThumbprint } = await getJose();
+        const publicKey = await importJWK(headerJson.jwk, headerJson.alg || "ES256");
 
-        const publicKey = await importJWK(
-            headerJson.jwk,
-            headerJson.alg || "ES256"
-        );
-
-        const { payload } = await jwtVerify(dpopProof, publicKey, {
-            typ: "dpop+jwt"
-        });
-
+        const { payload } = await jwtVerify(dpopProof, publicKey, { typ: "dpop+jwt" });
         const expectedHtm = req.method.toUpperCase();
         const expectedHtu = getRequestUrlForDpop(req);
 
         if (payload.htm !== expectedHtm) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                `Invalid htm: expected=${expectedHtm}, got=${payload.htm}`
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "Invalid DPoP htm."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", `Invalid htm: expected=${expectedHtm}, got=${payload.htm}`);
+            return res.status(401).json({ status: "FAILED", message: "Invalid DPoP htm." });
         }
 
         if (payload.htu !== expectedHtu) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                `Invalid htu: expected=${expectedHtu}, got=${payload.htu}`
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "Invalid DPoP htu."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", `Invalid htu: expected=${expectedHtu}, got=${payload.htu}`);
+            return res.status(401).json({ status: "FAILED", message: "Invalid DPoP htu." });
         }
 
         const now = Math.floor(Date.now() / 1000);
         const maxAgeSeconds = 120;
 
         if (!payload.iat || Math.abs(now - payload.iat) > maxAgeSeconds) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                "DPoP proof expired or invalid iat"
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "DPoP proof expired."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", "DPoP proof expired or invalid iat");
+            return res.status(401).json({ status: "FAILED", message: "DPoP proof expired." });
         }
 
         if (!payload.jti) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "DPOP_DENY",
-                "Missing DPoP jti"
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "Missing DPoP jti."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", "Missing DPoP jti");
+            return res.status(401).json({ status: "FAILED", message: "Missing DPoP jti." });
         }
 
         if (dpopJtiCache.has(payload.jti)) {
-            logAudit(
-                req.body?.officerId || req.body?.userId || "Unknown",
-                "REPLAY_ATTACK_BLOCKED",
-                `Reused DPoP jti: ${payload.jti}`
-            );
-
-            return res.status(401).json({
-                status: "FAILED",
-                message: "Replay Attack Blocked: DPoP jti was already used."
-            });
+            logAudit(req.body?.officerId || req.body?.userId || "Unknown", "REPLAY_ATTACK_BLOCKED", `Reused DPoP jti: ${payload.jti}`);
+            return res.status(401).json({ status: "FAILED", message: "Replay Attack Blocked: DPoP jti was already used." });
         }
 
-        dpopJtiCache.set(
-            payload.jti,
-            Date.now() + maxAgeSeconds * 1000
-        );
+        dpopJtiCache.set(payload.jti, Date.now() + maxAgeSeconds * 1000);
 
         req.dpop = {
-    jti: payload.jti,
-    jwkThumbprint: await calculateJwkThumbprint(headerJson.jwk)
-};
+            jti: payload.jti,
+            jwkThumbprint: await calculateJwkThumbprint(headerJson.jwk)
+        };
 
-logAudit(
-    req.body?.officerId || req.body?.userId || "Unknown",
-    "DPOP_ALLOW",
-    `DPoP verified jti=${payload.jti}`
-);
-
-next();
-
+        logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_ALLOW", `DPoP verified jti=${payload.jti}`);
+        next();
     } catch (e) {
         console.error("[DPOP] Error:", e.message);
-
-        logAudit(
-            req.body?.officerId || req.body?.userId || "Unknown",
-            "DPOP_DENY",
-            e.message
-        );
-
-        return res.status(401).json({
-            status: "FAILED",
-            message: "Invalid DPoP proof."
-        });
+        logAudit(req.body?.officerId || req.body?.userId || "Unknown", "DPOP_DENY", e.message);
+        return res.status(401).json({ status: "FAILED", message: "Invalid DPoP proof." });
     }
 }
 
@@ -384,7 +406,6 @@ function saveLTVArchive(evidence) {
         const safeTime = new Date().toISOString().replace(/[:.]/g, '-');
         const fileName = `verify_${safeTime}.json`;
         const archivePath = path.join(LTV_ARCHIVE_DIR, fileName);
-
         fs.writeFileSync(archivePath, JSON.stringify(evidence, null, 2));
         console.log(`[LTV] Archived verification evidence: ${fileName}`);
     } catch (e) {
@@ -397,50 +418,22 @@ function checkTrustChain(certPath) {
         if (!certPath || !fs.existsSync(certPath)) {
             return { valid: false, message: "Không tìm thấy chứng chỉ người ký" };
         }
-
         const rootCA = path.join(CA_DIR, 'rootCA.pem');
         const subCA = path.join(CA_DIR, 'subCA.pem');
 
-        execSync(
-            `openssl verify -CAfile "${rootCA}" -untrusted "${subCA}" "${certPath}"`,
-            { stdio: 'pipe' }
-        );
-
+        execSync(`openssl verify -CAfile "${rootCA}" -untrusted "${subCA}" "${certPath}"`, { stdio: 'pipe' });
         console.log("=== TRUST CHAIN RESULT: VALID ===");
-
-        return {
-            valid: true,
-            message: "TRUST_CHAIN_VALID"
-        };
-
+        return { valid: true, message: "TRUST_CHAIN_VALID" };
     } catch (e) {
-
         console.log("=== TRUST CHAIN RESULT: INVALID ===");
-
-        if (e.stdout) {
-            console.log(e.stdout.toString());
-        }
-
-        return {
-            valid: false,
-            message: "TRUST_CHAIN_INVALID"
-        };
-    }
-}
-
-function revokeOldSignatures(fileHash, signType) {
-    for (const key in signatureRegistry) {
-        if (signatureRegistry[key].fileHash === fileHash) {
-            signatureRegistry[key].revoked = true;
-            logAudit("SYSTEM", "REVOKE_OLD_SIG", `Revoked old ${signType} signature for file hash ${fileHash}`);
-        }
+        if (e.stdout) console.log(e.stdout.toString());
+        return { valid: false, message: "TRUST_CHAIN_INVALID" };
     }
 }
 
 // ==========================================
 // 3. MIDDLEWARE & HSM PKCS#11
 // ==========================================
-
 function gatewayPEPMiddleware(req, res, next) {
     const dpopNonce = req.headers['x-dpop-nonce'];
     if (!dpopNonce || !nonceCache.has(dpopNonce)) {
@@ -451,10 +444,10 @@ function gatewayPEPMiddleware(req, res, next) {
     next();
 }
 
-function opaPolicyMiddleware(req, res, next) {
+async function opaPolicyMiddleware(req, res, next) {
     const { userId, fileId } = req.body;
-    const user = users[userId];
-    const cachedFile = pdfCache[fileId];
+    const user = await getUser(userId);
+    const cachedFile = await getCachedFile(fileId);
 
     let decision = "DENY";
     let reason = "";
@@ -491,7 +484,6 @@ function getPublicKeyPEM() {
             '/usr/local/lib/softhsm/libsofthsm2.so'
         ];
         let libPath = paths.find(p => fs.existsSync(p));
-        
         if (!libPath) throw new Error("Không có thư viện SoftHSM trong Docker/Linux");
 
         const module = graphene.Module.load(libPath, 'SoftHSM');
@@ -513,7 +505,6 @@ function getPublicKeyPEM() {
 
         let publicKey = session.find({ class: graphene.ObjectClass.PUBLIC_KEY, label: "mykey" }).items(0);
         if (!publicKey) publicKey = session.find({ class: graphene.ObjectClass.PUBLIC_KEY, id: Buffer.from([0x01]) }).items(0);
-
         if (!publicKey) throw new Error("Không tìm thấy public key trong HSM");
 
         const attrs = publicKey.getAttribute({ modulus: null, publicExponent: null });
@@ -585,19 +576,10 @@ function hsmSignPKCS11(dataHashHex, pin = "123456") {
 
         let signer;
         try {
-            signer = session.createSign({
-                name: "ECDSA"
-            }, privateKey);
+            signer = session.createSign({ name: "ECDSA" }, privateKey);
         } catch (e) {
-            const pssParams = new graphene.RsaPssParams(
-                graphene.MechanismEnum.SHA256,
-                graphene.RsaMgf.MGF1_SHA256,
-                32
-            );
-            signer = session.createSign({
-                name: "RSA_PKCS_PSS",
-                params: pssParams
-            }, privateKey);
+            const pssParams = new graphene.RsaPssParams(graphene.MechanismEnum.SHA256, graphene.RsaMgf.MGF1_SHA256, 32);
+            signer = session.createSign({ name: "RSA_PKCS_PSS", params: pssParams }, privateKey);
         }
 
         const digest = Buffer.from(dataHashHex, 'hex');
@@ -619,7 +601,7 @@ function getRevokedList() {
         if (!data || data.trim() === "") return [];
         return JSON.parse(data);
     } catch (e) {
-        return []; // Nếu file bị rỗng hoặc lỗi JSON thì tự động trả về mảng rỗng
+        return [];
     }
 }
 
@@ -639,54 +621,31 @@ function formatOpenSSLDate(date) {
     const hh = String(date.getUTCHours()).padStart(2, '0');
     const mi = String(date.getUTCMinutes()).padStart(2, '0');
     const ss = String(date.getUTCSeconds()).padStart(2, '0');
-
     return `${yy}${mm}${dd}${hh}${mi}${ss}Z`;
 }
 
 function registerCertToOCSP(certPath) {
     try {
-        const ocspIndex = path.join(
-            __dirname,
-            '../../ca-infrastructure/ocsp/index.txt'
-        );
-
-        const serial = execSync(
-            `openssl x509 -in "${certPath}" -noout -serial`
-        ).toString().trim().replace('serial=', '').toUpperCase();
-
-        const subject = execSync(
-            `openssl x509 -in "${certPath}" -noout -subject -nameopt compat`
-        ).toString().trim().replace(/^subject=\s*/, '');
-
-        const endDateRaw = execSync(
-            `openssl x509 -in "${certPath}" -noout -enddate`
-        ).toString().trim().replace('notAfter=', '');
-
+        const ocspIndex = path.join(__dirname, '../../ca-infrastructure/ocsp/index.txt');
+        const serial = execSync(`openssl x509 -in "${certPath}" -noout -serial`).toString().trim().replace('serial=', '').toUpperCase();
+        const subject = execSync(`openssl x509 -in "${certPath}" -noout -subject -nameopt compat`).toString().trim().replace(/^subject=\s*/, '');
+        const endDateRaw = execSync(`openssl x509 -in "${certPath}" -noout -enddate`).toString().trim().replace('notAfter=', '');
         const expiry = formatOpenSSLDate(new Date(endDateRaw));
 
         let lines = [];
-
         if (fs.existsSync(ocspIndex)) {
             lines = fs.readFileSync(ocspIndex, 'utf8')
                 .split(/\r?\n/)
                 .filter(Boolean)
                 .filter(line => {
                     const cols = line.split('\t');
-
-                    // Bỏ dòng trùng serial
                     if (cols[3] === serial) return false;
-
-                    // Bỏ dòng trùng subject để tránh OpenSSL lỗi name index
                     if (cols[5] === subject) return false;
-
                     return true;
                 });
         }
-
         lines.push(`V\t${expiry}\t\t${serial}\tunknown\t${subject}`);
-
         fs.writeFileSync(ocspIndex, lines.join('\n') + '\n');
-
         console.log(`[OCSP] Registered cert ${serial}`);
     } catch (e) {
         console.warn("[OCSP] Register failed:", e.message);
@@ -695,61 +654,37 @@ function registerCertToOCSP(certPath) {
 
 function revokeCertInOCSP(certPath) {
     try {
-        const ocspIndex = path.join(
-            __dirname,
-            '../../ca-infrastructure/ocsp/index.txt'
-        );
-
-        const serial = execSync(
-            `openssl x509 -in "${certPath}" -noout -serial`
-        ).toString().trim().replace('serial=', '').toUpperCase();
-
-        const subject = execSync(
-            `openssl x509 -in "${certPath}" -noout -subject -nameopt compat`
-        ).toString().trim().replace(/^subject=\s*/, '');
-
-        const endDateRaw = execSync(
-            `openssl x509 -in "${certPath}" -noout -enddate`
-        ).toString().trim().replace('notAfter=', '');
-
+        const ocspIndex = path.join(__dirname, '../../ca-infrastructure/ocsp/index.txt');
+        const serial = execSync(`openssl x509 -in "${certPath}" -noout -serial`).toString().trim().replace('serial=', '').toUpperCase();
+        const subject = execSync(`openssl x509 -in "${certPath}" -noout -subject -nameopt compat`).toString().trim().replace(/^subject=\s*/, '');
+        const endDateRaw = execSync(`openssl x509 -in "${certPath}" -noout -enddate`).toString().trim().replace('notAfter=', '');
         const expiry = formatOpenSSLDate(new Date(endDateRaw));
         const revokeTime = formatOpenSSLDate(new Date());
 
         let found = false;
         let lines = [];
-
         if (fs.existsSync(ocspIndex)) {
             lines = fs.readFileSync(ocspIndex, 'utf8')
                 .split(/\r?\n/)
                 .filter(Boolean)
                 .filter(line => {
                     const cols = line.split('\t');
-
-                    // Xóa dòng trùng subject nhưng khác serial để tránh lỗi OpenSSL name index
-                    if (cols[5] === subject && cols[3] !== serial) {
-                        return false;
-                    }
-
+                    if (cols[5] === subject && cols[3] !== serial) return false;
                     return true;
                 })
                 .map(line => {
                     const cols = line.split('\t');
-
                     if (cols[3] === serial) {
                         found = true;
                         return `R\t${cols[1] || expiry}\t${revokeTime}\t${serial}\tunknown\t${subject}`;
                     }
-
                     return line;
                 });
         }
-
         if (!found) {
             lines.push(`R\t${expiry}\t${revokeTime}\t${serial}\tunknown\t${subject}`);
         }
-
         fs.writeFileSync(ocspIndex, lines.join('\n') + '\n');
-
         console.log(`[OCSP] Revoked cert ${serial}`);
     } catch (e) {
         console.warn("[OCSP] Revoke failed:", e.message);
@@ -810,11 +745,6 @@ function generateRemoteCert(userId, userName, pin) {
         registerCertToOCSP(crtPath);
         if (fs.existsSync(csrPath)) fs.unlinkSync(csrPath);
         logAudit(userId, "ISSUE_REMOTE_CERT", "Success");
-
-        users[userId].hasRemoteCert = true;
-        users[userId].signPin = pin;
-        users[userId].remoteKeyPath = keyPath;
-        users[userId].remoteCrtPath = crtPath;
         return true;
     } catch (error) { return false; }
 }
@@ -840,7 +770,6 @@ function generateHSMOrganCert() {
     } catch (e) { return null; }
 }
 
-// Khởi tạo chứng chỉ HSM Organ ngay khi start (dùng cho organ seal)
 generateHSMOrganCert();
 
 async function embedSignatureAndSeal(pdfBuffer, userName, userId, fileId, signatureBase64, signType, host) {
@@ -853,26 +782,16 @@ async function embedSignatureAndSeal(pdfBuffer, userName, userId, fileId, signat
     const firstPage = pages[0];
     const { width } = firstPage.getSize();
     
-    const signTypeText = signType === "REMOTE"
-        ? "Remote HSM"
-        : "USB Token";
+    const signTypeText = signType === "REMOTE" ? "Remote HSM" : "USB Token";
+    const cleanName = userName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
 
-    // Loại bỏ dấu tiếng Việt để tránh lỗi font Standard trong pdf-lib
-    const cleanName = userName
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/đ/g, "d")
-        .replace(/Đ/g, "D");
-
-    const sealText =
-    `DA KY SO
+    const sealText = `DA KY SO
 Nguoi ky: ${cleanName}
 Ma CB: ${userId}
 Hinh thuc: ${signTypeText}
 Thuat toan: ML-DSA-65 (PQC)
 Thoi gian: ${nowVN()}`;
 
-    // Tạo nội dung mã QR (mã QR hỗ trợ tiếng Việt UTF-8 đầy đủ, kèm liên kết trực tuyến)
     const verifyUrl = `https://${host || 'localhost:3000'}/xac-thuc?fileId=${fileId}`;
     const qrContent = `${verifyUrl}\n\n` +
                       `CỔNG XÁC THỰC CHỮ KÝ SỐ QUỐC GIA\n` +
@@ -892,7 +811,6 @@ Thoi gian: ${nowVN()}`;
         console.error("Lỗi sinh QR Code cho PDF:", qrErr);
     }
 
-    // Thiết lập khung chữ ký to hơn để chứa cả QR Code và Text (Rộng 320, Cao 115)
     const boxWidth = 320;
     const boxHeight = 115;
     const boxX = width - boxWidth - 20;
@@ -907,7 +825,6 @@ Thoi gian: ${nowVN()}`;
         borderWidth: 2 
     });
 
-    // Vẽ QR Code ở bên trái khung
     if (qrImage) {
         firstPage.drawImage(qrImage, {
             x: boxX + 10,
@@ -917,7 +834,6 @@ Thoi gian: ${nowVN()}`;
         });
     }
 
-    // Vẽ text thông tin chữ ký ở bên phải khung
     firstPage.drawText(sealText, { 
         x: boxX + 100, 
         y: boxY + boxHeight - 22, 
@@ -930,25 +846,21 @@ Thoi gian: ${nowVN()}`;
 }
 
 function generateDetachedSignatureFile(signedFileName, signatureBase64) {
-    const baseName = signedFileName.slice(0, -4); // Remove .pdf
+    const baseName = signedFileName.slice(0, -4);
     const sigFileName = `${baseName}.sig`;
-
-    // Tạo file .sig chứa base64 signature
     fs.writeFileSync(path.join(SIGNED_DIR, sigFileName), signatureBase64);
-
     return `/download-signed/${sigFileName}`;
 }
 
 // ==========================================
 // 5. CÁC API HỆ THỐNG
 // ==========================================
-
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
     console.log(`[LOGIN ATTEMPT] UserID: ${req.body.userId}`);
-    const u = users[req.body.userId];
+    const u = await getUser(req.body.userId);
     if (u && u.password === req.body.password) {
         console.log(`[LOGIN SUCCESS] User: ${u.name}`);
-        res.json({ userId: req.body.userId, ...u });
+        res.json(u);
     } else {
         console.log(`[LOGIN FAILED] Invalid credentials for: ${req.body.userId}`);
         res.status(401).send();
@@ -962,10 +874,10 @@ app.get('/api/get-nonce', (req, res) => {
     res.json({ nonce });
 });
 
-app.post('/api/upload-pdf', upload.single('document'), (req, res) => {
+app.post('/api/upload-pdf', upload.single('document'), async (req, res) => {
     const fileId = Date.now().toString();
     const serverHash = crypto.createHash('sha256').update(req.file.buffer).digest('hex');
-    pdfCache[fileId] = {
+    const fileData = {
         buffer: req.file.buffer,
         name: req.file.originalname,
         hash: req.body.clientHash || serverHash,
@@ -976,116 +888,110 @@ app.post('/api/upload-pdf', upload.single('document'), (req, res) => {
         noiThuongTru: req.body.noiThuongTru || '',
         ngayGui: nowVN()
     };
+    await saveCachedFile(fileId, fileData);
     res.json({ fileId, fileName: req.file.originalname });
 });
 
-app.post('/api/issue-cert', (req, res) => {
-    const pathP12 = generateCitizenCert(req.body.userId, users[req.body.userId].name, req.body.userPin);
+app.post('/api/issue-cert', async (req, res) => {
+    const user = await getUser(req.body.userId);
+    if (!user) return res.status(404).send();
+    const pathP12 = generateCitizenCert(req.body.userId, user.name, req.body.userPin);
     if (pathP12) { 
-        users[req.body.userId].hasCert = true; 
-        users[req.body.userId].p12Path = pathP12;
-        users[req.body.userId].certPin = req.body.userPin; // Lưu PIN để dùng khi ký PDF
+        await updateUser(req.body.userId, {
+            hasCert: 1,
+            p12Path: pathP12,
+            certPin: req.body.userPin
+        });
         res.json({ status: "OK" }); 
+    } else {
+        res.status(500).send();
     }
-    else res.status(500).send();
 });
 
-app.post('/api/revoke-cert', (req, res) => {
+app.post('/api/revoke-cert', async (req, res) => {
     const userId = req.body.userId;
-    const user = users[userId];
+    const user = await getUser(userId);
+    if (!user) return res.status(404).send();
 
     addToCRL(userId, user.name);
-
     const crtPath = path.join(KEYSTORE_DIR, `citizen_${userId}.crt`);
-
     if (fs.existsSync(crtPath)) {
         revokeCertInOCSP(crtPath);
     }
-
-    user.hasCert = false;
-
-    for (const key in signatureRegistry) {
-        if (signatureRegistry[key].userId === userId && signatureRegistry[key].type === "LOCAL") {
-            signatureRegistry[key].revoked = true;
-        }
-    }
-
-    saveRegistry();
-
+    await updateUser(userId, { hasCert: 0 });
+    await dbRun("UPDATE signature_registry SET revoked = 1 WHERE userId = ? AND type = 'LOCAL'", [userId]);
     res.json({ status: "OK" });
 });
 
-app.post('/api/revoke-remote-cert', (req, res) => {
+app.post('/api/revoke-remote-cert', async (req, res) => {
     const { userId } = req.body;
-    const user = users[userId];
-
+    const user = await getUser(userId);
     if (!user) {
-        return res.status(404).json({
-            status: "FAILED",
-            message: "Không tìm thấy người dùng!"
-        });
+        return res.status(404).json({ status: "FAILED", message: "Không tìm thấy người dùng!" });
     }
 
     addToCRL(userId, user.name);
-
     if (user.remoteCrtPath && fs.existsSync(user.remoteCrtPath)) {
-    revokeCertInOCSP(user.remoteCrtPath);
+        revokeCertInOCSP(user.remoteCrtPath);
     }
 
-    user.hasRemoteCert = false;
-    user.signPin = "";
-    user.remoteKeyPath = "";
-    user.remoteCrtPath = "";
-
-    for (const key in signatureRegistry) {
-        if (signatureRegistry[key].userId === userId && signatureRegistry[key].type === "REMOTE") {
-            signatureRegistry[key].revoked = true;
-        }
-    }
-    saveRegistry();
-
-    logAudit(userId, "REVOKE_REMOTE_CERT", "Thu hồi chứng thư Remote/HSM và các chữ ký Remote liên quan");
-
-    res.json({
-        status: "OK",
-        message: "Đã thu hồi chứng thư Remote/HSM!"
+    await updateUser(userId, {
+        hasRemoteCert: 0,
+        signPin: "",
+        remoteKeyPath: "",
+        remoteCrtPath: ""
     });
+
+    await dbRun("UPDATE signature_registry SET revoked = 1 WHERE userId = ? AND type = 'REMOTE'", [userId]);
+    logAudit(userId, "REVOKE_REMOTE_CERT", "Thu hồi chứng thư Remote/HSM");
+    res.json({ status: "OK", message: "Đã thu hồi chứng thư Remote/HSM!" });
 });
 
-app.post('/api/issue-remote-cert', (req, res) => {
+app.post('/api/issue-remote-cert', async (req, res) => {
     const { userId, signPin } = req.body;
-    const user = users[userId];
+    const user = await getUser(userId);
+    if (!user) return res.status(404).send();
     if (generateRemoteCert(userId, user.name, signPin)) {
+        const keyPath = path.join(REMOTE_KEYS_DIR, `remote_${userId}.key`);
+        const crtPath = path.join(REMOTE_KEYS_DIR, `remote_${userId}.crt`);
+        await updateUser(userId, {
+            hasRemoteCert: 1,
+            signPin: signPin,
+            remoteKeyPath: keyPath,
+            remoteCrtPath: crtPath
+        });
         res.json({ status: "OK", message: "Đã tạo chứng chỉ Cloud thành công!" });
-    } else res.status(500).json({ status: "FAILED", message: "Lỗi hệ thống" });
+    } else {
+        res.status(500).json({ status: "FAILED", message: "Lỗi hệ thống" });
+    }
 });
 
 app.post('/api/remote-sign', gatewayPEPMiddleware, opaPolicyMiddleware, async (req, res) => {
     const { fileId, userId, signPin, clientHash } = req.body;
     const fileIdFinal = fileId || crypto.randomBytes(8).toString('hex');
     req.body.fileId = fileIdFinal;
-    const user = users[userId];
+    const user = await getUser(userId);
 
     if (!user || !user.hasRemoteCert || user.signPin !== signPin) {
         return res.json({ status: "FAILED", message: "Mã PIN Cloud không đúng!" });
     }
 
-    const cached = pdfCache[fileIdFinal];
+    const cached = await getCachedFile(fileIdFinal);
     if (!cached) return res.status(404).json({ message: "File không tồn tại" });
 
     try {
         const serverComputedHash = crypto.createHash('sha256').update(cached.buffer).digest('hex');
         if (serverComputedHash !== clientHash) return res.json({ status: 'FAILED', message: "Dữ liệu bị thay đổi!" });
 
-        revokeOldSignatures(clientHash, "REMOTE");
+        await revokeOldSignatures(clientHash, "REMOTE");
 
         const signatureBase64 = hsmSignPKCS11(clientHash, "123456");
 
-        signatureRegistry[fileIdFinal] = {
+        await saveSignature(fileIdFinal, {
             signatureId: Date.now().toString(),
             userId, timestamp: new Date().toISOString(), signature: signatureBase64,
             fileHash: clientHash, revoked: false, type: "REMOTE"
-        };
+        });
 
         const host = req.headers.host || 'localhost:3000';
         const signedPdfBuffer = await embedSignatureAndSeal(cached.buffer, user.name, userId, fileIdFinal, signatureBase64, "REMOTE", host);
@@ -1110,13 +1016,14 @@ app.post('/api/remote-sign', gatewayPEPMiddleware, opaPolicyMiddleware, async (r
             console.error(`[PYTHON ERROR] Lỗi khi ký HSM: ${e.message}`);
             if (fs.existsSync(tempPdfPath)) fs.renameSync(tempPdfPath, finalPdfPath);
         }
-        saveRegistry();
 
         const downloadUrlSig = generateDetachedSignatureFile(signedFileName, signatureBase64);
 
-        cached.status = "SIGNED";
-        cached.downloadUrl = `/download-signed/${signedFileName}`;
-        cached.downloadUrlSig = downloadUrlSig;
+        await saveCachedFile(fileIdFinal, {
+            status: "SIGNED",
+            downloadUrl: `/download-signed/${signedFileName}`,
+            downloadUrlSig
+        });
 
         globalSignedHistory.unshift({ fileName: cached.name, signer: user.name, time: nowVN(), url: `/download-signed/${signedFileName}` });
         logAudit(user.name, "SIGN_SUCCESS_HSM_PKCS11", cached.name);
@@ -1135,7 +1042,7 @@ app.post('/api/remote-sign', gatewayPEPMiddleware, opaPolicyMiddleware, async (r
 app.post('/api/check-officer-sign-policy', async (req, res) => {
     const { fileId, officerId, signType } = req.body;
 
-    const officer = users[officerId];
+    const officer = await getUser(officerId);
     if (!officer || officer.role !== "OFFICER") {
         logAudit(officerId || "Unknown", "OPA_DECISION_DENY", "Không phải cán bộ có thẩm quyền");
         return res.status(403).json({
@@ -1144,7 +1051,7 @@ app.post('/api/check-officer-sign-policy', async (req, res) => {
         });
     }
 
-    const cached = pdfCache[fileId];
+    const cached = await getCachedFile(fileId);
     if (!cached) {
         logAudit(officerId, "OPA_DECISION_DENY", `Không tìm thấy hồ sơ ${fileId}`);
         return res.status(404).json({
@@ -1153,97 +1060,57 @@ app.post('/api/check-officer-sign-policy', async (req, res) => {
         });
     }
 
-    const action = signType === "LOCAL"
-        ? "officer_local_sign"
-        : "officer_remote_sign";
+    const action = signType === "LOCAL" ? "officer_local_sign" : "officer_remote_sign";
 
     const opaAllow = await callOPA({
         action,
-        user: {
-            id: officerId,
-            role: officer.role
-        },
-        file: {
-            id: fileId,
-            status: cached.status,
-            ownerId: cached.ownerId
-        }
+        user: { id: officerId, role: officer.role },
+        file: { id: fileId, status: cached.status, ownerId: cached.ownerId }
     });
 
     if (!opaAllow) {
-        logAudit(
-            officerId,
-            "OPA_DECISION_DENY",
-            `OPA/Rego deny ${action} - fileStatus=${cached.status}`
-        );
-
+        logAudit(officerId, "OPA_DECISION_DENY", `OPA/Rego deny ${action} - fileStatus=${cached.status}`);
         return res.status(403).json({
             status: "FAILED",
             message: "Hồ sơ phải được duyệt trước khi ký."
         });
     }
 
-    return res.json({
-        status: "OK",
-        message: "Policy allow"
-    });
+    return res.json({ status: "OK", message: "Policy allow" });
 });
 
 app.post('/api/officer-remote-sign', requireDPoP, async (req, res) => {
     const { fileId, officerId, hsmPin } = req.body;
-
-    const officer = users[officerId];
+    const officer = await getUser(officerId);
     if (!officer || officer.role !== "OFFICER") {
-        return res.status(403).json({
-            status: "FAILED",
-            message: "Chỉ cán bộ có thẩm quyền mới được ký hồ sơ!"
-        });
+        return res.status(403).json({ status: "FAILED", message: "Chỉ cán bộ có thẩm quyền mới được ký hồ sơ!" });
     }
 
-    const cached = pdfCache[fileId];
+    const cached = await getCachedFile(fileId);
     if (!cached) {
-        return res.status(404).json({
-            status: "FAILED",
-            message: "Không tìm thấy hồ sơ!"
-        });
+        return res.status(404).json({ status: "FAILED", message: "Không tìm thấy hồ sơ!" });
     }
 
-        const opaAllow = await callOPA({
+    const opaAllow = await callOPA({
         action: "officer_remote_sign",
-        user: {
-            id: officerId,
-            role: officer.role
-        },
-        file: {
-            id: fileId,
-            status: cached.status,
-            ownerId: cached.ownerId
-        }
+        user: { id: officerId, role: officer.role },
+        file: { id: fileId, status: cached.status, ownerId: cached.ownerId }
     });
 
-    logAudit(
-        officerId,
-        opaAllow ? "OPA_DECISION_ALLOW" : "OPA_DECISION_DENY",
-        opaAllow
-            ? "OPA/Rego allow officer_remote_sign"
-            : "OPA/Rego deny officer_remote_sign"
-    );
+    logAudit(officerId, opaAllow ? "OPA_DECISION_ALLOW" : "OPA_DECISION_DENY", 
+             opaAllow ? "OPA/Rego allow officer_remote_sign" : "OPA/Rego deny officer_remote_sign");
 
     if (!opaAllow) {
-        return res.status(403).json({
-            status: "FAILED",
-            message: "OPA/Rego Blocked: Không đủ quyền hoặc hồ sơ chưa APPROVED!"
-        });
+        return res.status(403).json({ status: "FAILED", message: "OPA/Rego Blocked: Không đủ quyền hoặc hồ sơ chưa APPROVED!" });
     }
 
     try {
         const documentHash = crypto.createHash('sha256').update(cached.buffer).digest('hex');
-
-        revokeOldSignatures(documentHash, "REMOTE");
+        await revokeOldSignatures(documentHash, "REMOTE");
 
         const signatureBase64 = hsmSignPKCS11(documentHash, hsmPin || "123456");
 
-        signatureRegistry[fileId] = {
+        await saveSignature(fileId, {
             signatureId: Date.now().toString(),
             userId: officerId,
             timestamp: new Date().toISOString(),
@@ -1252,7 +1119,7 @@ app.post('/api/officer-remote-sign', requireDPoP, async (req, res) => {
             revoked: false,
             type: "REMOTE",
             signerCertPath: officer.remoteCrtPath
-        };
+        });
 
         const host = req.headers.host || 'localhost:3000';
         const signedPdfBuffer = await embedSignatureAndSeal(
@@ -1288,15 +1155,15 @@ app.post('/api/officer-remote-sign', requireDPoP, async (req, res) => {
             if (fs.existsSync(tempPdfPath)) fs.renameSync(tempPdfPath, finalPdfPath);
         }
 
-        saveRegistry();
-
         const downloadUrlSig = generateDetachedSignatureFile(signedFileName, signatureBase64);
 
-        cached.status = "SIGNED";
-        cached.signedBy = officerId;
-        cached.signType = "REMOTE";
-        cached.downloadUrl = `/download-signed/${signedFileName}`;
-        cached.downloadUrlSig = downloadUrlSig;
+        await saveCachedFile(fileId, {
+            status: "SIGNED",
+            signedBy: officerId,
+            signType: "REMOTE",
+            downloadUrl: `/download-signed/${signedFileName}`,
+            downloadUrlSig
+        });
 
         globalSignedHistory.unshift({
             fileName: cached.name,
@@ -1316,10 +1183,7 @@ app.post('/api/officer-remote-sign', requireDPoP, async (req, res) => {
 
     } catch (e) {
         console.error("Officer Remote Sign Error:", e);
-        res.status(500).json({
-            status: "FAILED",
-            message: "Lỗi ký HSM: " + e.message
-        });
+        res.status(500).json({ status: "FAILED", message: "Lỗi ký HSM: " + e.message });
     }
 });
 
@@ -1328,14 +1192,15 @@ app.post('/api/verify-signature', async (req, res) => {
     console.log("=== DATA TỪ AGENT GỬI LÊN ===");
     console.log("Hash:", documentHash);
     console.log("FileId:", fileId);
-    console.log("Signature (50 chars):", signatureBase64 ? signatureBase64.substring(0, 50) : "MISSING");
-    console.log("Cert PEM (50 chars):", certificatePEM ? certificatePEM.substring(0, 50) : "MISSING");
     try {
         const cert = forge.pki.certificateFromPem(certificatePEM);
         const cn = cert.subject.getField('CN').value;
-        const matchedUserId = Object.keys(users)
-            .sort((a, b) => b.length - a.length)
-            .find(id => cn.startsWith(id + '_'));
+
+        // Lấy danh sách users từ db để khớp CN
+        const dbUsers = await dbAll("SELECT userId, name FROM users");
+        const matchedUserId = dbUsers
+            .sort((a, b) => b.userId.length - a.userId.length)
+            .find(u => cn.startsWith(u.userId + '_'))?.userId;
 
         if (!matchedUserId) {
             return res.json({ status: 'FAILED', message: "Không xác định được chủ thể chứng chỉ!" });
@@ -1343,14 +1208,14 @@ app.post('/api/verify-signature', async (req, res) => {
 
         const userId = matchedUserId;
         const userName = cn.substring(userId.length + 1);
-        const signerUser = users[userId];
+        const signerUser = await getUser(userId);
 
         if (!signerUser || signerUser.role !== "OFFICER") {
             return res.json({ status: 'FAILED', message: "Chỉ cán bộ có thẩm quyền mới được ký hồ sơ!" });
         }
 
         if (getRevokedList().find(i => i.userId === userId)) return res.json({ status: 'FAILED', message: "Chứng chỉ đã bị thu hồi!" });
-        const cached = pdfCache[fileId];
+        const cached = await getCachedFile(fileId);
         if (!cached) return res.json({ status: 'FAILED', message: "Không tìm thấy tài liệu gốc trên Server!" });
         if (cached.status !== "APPROVED") {
             return res.json({ status: 'FAILED', message: "Hồ sơ chưa được phê duyệt, không được phép ký!" });
@@ -1392,21 +1257,19 @@ app.post('/api/verify-signature', async (req, res) => {
         }
 
         if (isSigValid) {
-            revokeOldSignatures(documentHash, "LOCAL");
+            await revokeOldSignatures(documentHash, "LOCAL");
 
-            signatureRegistry[fileId] = {
-            signatureId: Date.now().toString(),
-            userId,
-            timestamp: new Date().toISOString(),
-            signature: signatureBase64,
-            fileHash: documentHash,
-            revoked: false,
-            type: "LOCAL",
-            certificatePEM: certificatePEM,
-            signerCertPath: users[userId]?.p12Path
-                ? path.join(KEYSTORE_DIR, `citizen_${userId}.crt`)
-                : null
-        };
+            await saveSignature(fileId, {
+                signatureId: Date.now().toString(),
+                userId,
+                timestamp: new Date().toISOString(),
+                signature: signatureBase64,
+                fileHash: documentHash,
+                revoked: false,
+                type: "LOCAL",
+                certificatePEM: certificatePEM,
+                signerCertPath: signerUser?.p12Path ? path.join(KEYSTORE_DIR, `citizen_${userId}.crt`) : null
+            });
 
             const host = req.headers.host || 'localhost:3000';
             const signedPdfBuffer = await embedSignatureAndSeal(cached.buffer, userName, userId, fileId, signatureBase64, "LOCAL", host);
@@ -1417,11 +1280,10 @@ app.post('/api/verify-signature', async (req, res) => {
             fs.writeFileSync(tempPdfPath, signedPdfBuffer);
             try {
                 const pythonScript = path.join(__dirname, '../../tsp/python_core/sign_pdf.py');
-                // Dùng chứng chỉ thực tế của người dùng nếu có
-                const userP12Path = users[userId]?.p12Path && fs.existsSync(users[userId].p12Path)
-                    ? users[userId].p12Path
+                const userP12Path = signerUser?.p12Path && fs.existsSync(signerUser.p12Path)
+                    ? signerUser.p12Path
                     : path.join(__dirname, '../../tsp/python_core/test_cert.p12');
-                const userPin = users[userId]?.certPin || 'secret';
+                const userPin = signerUser?.certPin || 'secret';
                 
                 console.log(`[PYTHON] Đang gọi lệnh ký Local cho: ${signedFileName} bằng cert của ${userId}`);
                 execSync(`python3 "${pythonScript}" "${tempPdfPath}" "${finalPdfPath}" "${userP12Path}" "${userPin}"`, { 
@@ -1434,15 +1296,16 @@ app.post('/api/verify-signature', async (req, res) => {
                 console.error(`[PYTHON ERROR] Lỗi khi ký Local: ${e.message}`);
                 if (fs.existsSync(tempPdfPath)) fs.renameSync(tempPdfPath, finalPdfPath);
             }
-            saveRegistry();
 
             const downloadUrlSig = generateDetachedSignatureFile(signedFileName, signatureBase64);
 
-            cached.status = "SIGNED";
-            cached.signedBy = userId;
-            cached.signType = "LOCAL";
-            cached.downloadUrl = `/download-signed/${signedFileName}`;
-            cached.downloadUrlSig = downloadUrlSig;
+            await saveCachedFile(fileId, {
+                status: "SIGNED",
+                signedBy: userId,
+                signType: "LOCAL",
+                downloadUrl: `/download-signed/${signedFileName}`,
+                downloadUrlSig
+            });
 
             globalSignedHistory.unshift({
                 fileName: cached.name,
@@ -1459,8 +1322,12 @@ app.post('/api/verify-signature', async (req, res) => {
                 downloadUrl: `/download-signed/${signedFileName}`,
                 downloadUrlSig
             });
-        } else res.json({ status: 'FAILED', message: "Chữ ký giả mạo!" });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+        } else {
+            res.json({ status: 'FAILED', message: "Chữ ký giả mạo!" });
+        }
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 async function verifyPdfPath(pdfPath, originalName) {
@@ -1480,7 +1347,8 @@ async function verifyPdfPath(pdfPath, originalName) {
         const keywordsForRegistry = pdfDocForRegistry.getKeywords() || "";
         const fileIdForRegistry = keywordsForRegistry.match(/FILE_(\w+)/)?.[1];
 
-        if (fileIdForRegistry && signatureRegistry[fileIdForRegistry]?.revoked) {
+        const sig = await getSignature(fileIdForRegistry);
+        if (fileIdForRegistry && sig?.revoked) {
             saveLTVArchive({
                 verify_time: new Date().toISOString(),
                 document: originalName || "uploaded.pdf",
@@ -1488,7 +1356,7 @@ async function verifyPdfPath(pdfPath, originalName) {
                 timestamp_valid: pythonOut.includes("Timestamp valid: True"),
                 ocsp_status: "REVOKED",
                 verification_result: "REVOKED",
-                certificate_path: signatureRegistry[fileIdForRegistry]?.signerCertPath || "N/A",
+                certificate_path: sig?.signerCertPath || "N/A",
                 reason: "Signature registry marked as revoked"
             });
 
@@ -1503,7 +1371,6 @@ async function verifyPdfPath(pdfPath, originalName) {
         signerRaw = signerRaw.replace(/^Common Name:\s*/i, '');
         const signerName = signerRaw.includes('_') ? signerRaw.split('_').slice(1).join(' ') : signerRaw;
 
-        const sig = signatureRegistry[fileIdForRegistry];
         let ocspStatusForArchive = "UNKNOWN";
         let trustChainStatusForArchive = "UNKNOWN";
 
@@ -1549,10 +1416,7 @@ async function verifyPdfPath(pdfPath, originalName) {
             }
 
             if (ocspResult.status === 'ERROR') {
-                return {
-                    valid: false,
-                    message: "Không kiểm tra được OCSP responder!"
-                };
+                return { valid: false, message: "Không kiểm tra được OCSP responder!" };
             }
         }
 
@@ -1582,11 +1446,7 @@ async function verifyPdfPath(pdfPath, originalName) {
             certificate_path: sig?.signerCertPath || "N/A"
         });
 
-        return { 
-            valid: true, 
-            signer: signerName,
-            message: formatted
-        };
+        return { valid: true, signer: signerName, message: formatted };
     } else if (pythonOut.includes("Result: INVALID") || pythonOut.includes("LỖI HỆ THỐNG")) {
         const errMatch = pythonOut.match(/LỖI HỆ THỐNG KHI XÁC THỰC: (.*)/);
         const detail = errMatch ? errMatch[1].trim() : 'Xác minh mật mã thất bại.';
@@ -1609,7 +1469,7 @@ async function verifyPdfPath(pdfPath, originalName) {
         return { valid: false, message: "Metadata không đầy đủ hoặc bị hỏng!" };
     }
 
-    const sig = signatureRegistry[fileId];
+    const sig = await getSignature(fileId);
     if (!sig) return { valid: false, message: "Không tìm thấy dữ liệu chữ ký trên hệ thống (Registry)!" };
 
     if (sig.revoked) return { valid: false, message: `Tài liệu này đã bị thu hồi do có phiên bản Ký ${signType} mới hơn thay thế!` };
@@ -1640,12 +1500,7 @@ async function verifyPdfPath(pdfPath, originalName) {
                         Buffer.from(sig.signature, 'base64')
                     );
                 } else if (pubKey.type === 'ec') {
-                    isValidSignature = crypto.verify(
-                        null,
-                        digest,
-                        publicKeyPem,
-                        Buffer.from(sig.signature, 'base64')
-                    );
+                    isValidSignature = crypto.verify(null, digest, publicKeyPem, Buffer.from(sig.signature, 'base64'));
                 }
             } else if (signType === "LOCAL") {
                 if (!sig.certificatePEM) {
@@ -1665,12 +1520,7 @@ async function verifyPdfPath(pdfPath, originalName) {
                         Buffer.from(sig.signature, 'base64')
                     );
                 } else if (pubKey.type === 'ec') {
-                    isValidSignature = crypto.verify(
-                        null,
-                        digest,
-                        cleanCertPem,
-                        Buffer.from(sig.signature, 'base64')
-                    );
+                    isValidSignature = crypto.verify(null, digest, cleanCertPem, Buffer.from(sig.signature, 'base64'));
                 }
             }
         }
@@ -1683,10 +1533,11 @@ async function verifyPdfPath(pdfPath, originalName) {
         return { valid: false, message: "Xác minh mật mã thất bại! Dữ liệu có thể đã bị can thiệp." };
     }
 
+    const dbUser = await getUser(userId);
     return {
         valid: true,
         message: `✔️ Tài liệu hợp lệ (Phương thức: ${signType})\nKhông bị thu hồi và toàn vẹn dữ liệu.`,
-        signer: `${users[userId]?.name || "Unknown"} (${userId})`
+        signer: `${dbUser?.name || "Unknown"} (${userId})`
     };
 }
 
@@ -1708,7 +1559,7 @@ app.post('/api/verify-only', upload.single('document'), async (req, res) => {
 app.get('/api/verify-by-id/:fileId', async (req, res) => {
     try {
         const fileId = req.params.fileId;
-        const cached = pdfCache[fileId];
+        const cached = await getCachedFile(fileId);
         if (!cached) {
             return res.json({ valid: false, message: "Không tìm thấy hồ sơ/tài liệu trên hệ thống!" });
         }
@@ -1736,38 +1587,42 @@ app.get('/api/verify-by-id/:fileId', async (req, res) => {
 });
 
 app.get('/api/history', (req, res) => res.json(globalSignedHistory));
-app.get('/download-cert/:userId', (req, res) => {
+
+app.get('/download-cert/:userId', async (req, res) => {
+    const user = await getUser(req.params.userId);
+    if (!user || !user.p12Path) return res.status(404).send();
     res.setHeader('Content-Type', 'application/x-pkcs12');
-    res.download(users[req.params.userId].p12Path);
+    res.download(user.p12Path);
 });
+
 app.get('/download-signed/:name', (req, res) => res.download(path.join(SIGNED_DIR, req.params.name)));
 
 // ==========================================
 // 6. GIAO DIỆN NGƯỜI DÙNG (FRONTEND)
 // ==========================================
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../frontend/index.html')));
+
 // ==========================================
 // API CHO CÁN BỘ (OFFICER)
 // ==========================================
-app.get('/api/pending-requests', (req, res) => {
-    const pending = Object.entries(pdfCache)
-        .filter(([id, file]) => file.status === "PENDING" || file.status === "APPROVED" || file.status === "SIGNED")
-        .map(([id, file]) => ({
-            fileId: id,
-            hoTen: file.hoTen || 'N/A',
-            cccd: file.cccd || 'N/A',
-            noiThuongTru: file.noiThuongTru || 'N/A',
-            ngayGui: file.ngayGui || 'N/A',
-            status: file.status || 'PENDING',
-            hash: file.hash || crypto.createHash('sha256').update(file.buffer).digest('hex'),
-            downloadUrl: file.downloadUrl || '',
-            downloadUrlSig: file.downloadUrlSig || ''
-        }));
+app.get('/api/pending-requests', async (req, res) => {
+    const rows = await dbAll("SELECT * FROM pdf_cache WHERE status IN ('PENDING', 'APPROVED', 'SIGNED')");
+    const pending = rows.map(file => ({
+        fileId: file.fileId,
+        hoTen: file.hoTen || 'N/A',
+        cccd: file.cccd || 'N/A',
+        noiThuongTru: file.noiThuongTru || 'N/A',
+        ngayGui: file.ngayGui || 'N/A',
+        status: file.status || 'PENDING',
+        hash: file.hash,
+        downloadUrl: file.downloadUrl || '',
+        downloadUrlSig: file.downloadUrlSig || ''
+    }));
     res.json(pending);
 });
 
-app.get('/api/file-info/:fileId', (req, res) => {
-    const file = pdfCache[req.params.fileId];
+app.get('/api/file-info/:fileId', async (req, res) => {
+    const file = await getCachedFile(req.params.fileId);
     if (!file) return res.status(404).json({ error: 'File not found' });
     res.json({
         fileId: req.params.fileId,
@@ -1776,35 +1631,30 @@ app.get('/api/file-info/:fileId', (req, res) => {
         ngaySinh: file.ngaySinh || '',
         gioiTinh: file.gioiTinh || '',
         noiThuongTru: file.noiThuongTru || '',
-
         mucDich: file.mucDich || '',
         email: file.email || '',
         phone: file.phone || '',
         ghiChu: file.ghiChu || '',
         ngayGui: file.ngayGui || '',
-
         status: file.status,
-        hash: file.hash || crypto.createHash('sha256').update(file.buffer).digest('hex'),
+        hash: file.hash,
         downloadUrl: file.downloadUrl || '',
         downloadUrlSig: file.downloadUrlSig || ''
     });
 });
 
-app.get('/api/citizen-lookup/:cccd', (req, res) => {
+app.get('/api/citizen-lookup/:cccd', async (req, res) => {
     const cccd = req.params.cccd;
-
-    const citizen = users[cccd];
-
-    if (citizen && citizen.role === "Citizen") {
+    const citizen = await dbGet("SELECT * FROM users WHERE cccd = ? AND role = 'Citizen'", [cccd]);
+    if (citizen) {
         return res.json({
-            hoTen: citizen.hoTen,
+            hoTen: citizen.hoTen || citizen.name,
             cccd: citizen.cccd,
             ngaySinh: citizen.ngaySinh,
             gioiTinh: citizen.gioiTinh,
             noiThuongTru: citizen.noiThuongTru
         });
     }
-
     res.json({
         hoTen: 'Không tìm thấy',
         cccd: cccd,
@@ -1814,61 +1664,44 @@ app.get('/api/citizen-lookup/:cccd', (req, res) => {
     });
 });
 
-app.post('/api/approve', (req, res) => {
+app.post('/api/approve', async (req, res) => {
     const { fileId, officerId } = req.body;
-    const officer = users[officerId];
+    const officer = await getUser(officerId);
     if (!officer || officer.role !== "OFFICER") {
         return res.status(403).json({ status: "FAILED", message: "Chỉ cán bộ mới có quyền phê duyệt!" });
     }
-    const file = pdfCache[fileId];
+    const file = await getCachedFile(fileId);
     if (!file) return res.status(404).json({ status: "FAILED", message: "Không tìm thấy hồ sơ!" });
-    file.status = "APPROVED";
-    file.approvedBy = officerId;
-    file.approvedAt = new Date().toISOString();
+    
+    await saveCachedFile(fileId, {
+        status: "APPROVED",
+        approvedBy: officerId,
+        approvedAt: new Date().toISOString()
+    });
     logAudit(officerId, "APPROVE", `Đã duyệt hồ sơ ${fileId}`);
     res.json({ status: "OK", message: "Đã phê duyệt hồ sơ!" });
 });
 
-app.post('/api/reject', (req, res) => {
+app.post('/api/reject', async (req, res) => {
     const { fileId, officerId, reason } = req.body;
-    const officer = users[officerId];
+    const officer = await getUser(officerId);
     if (!officer || officer.role !== "OFFICER") {
         return res.status(403).json({ status: "FAILED", message: "Chỉ cán bộ mới có quyền từ chối!" });
     }
-    const file = pdfCache[fileId];
+    const file = await getCachedFile(fileId);
     if (!file) return res.status(404).json({ status: "FAILED", message: "Không tìm thấy hồ sơ!" });
-    file.status = "REJECTED";
-    file.rejectedBy = officerId;
-    file.rejectReason = reason || "Thông tin không hợp lệ";
-    file.rejectedAt = new Date().toISOString();
+    
+    await saveCachedFile(fileId, {
+        status: "REJECTED",
+        rejectedBy: officerId,
+        rejectReason: reason || "Thông tin không hợp lệ",
+        rejectedAt: new Date().toISOString()
+    });
     logAudit(officerId, "REJECT", `Từ chối hồ sơ ${fileId}: ${reason}`);
     res.json({ status: "OK", message: "Đã từ chối hồ sơ!" });
 });
 
-// ==========================================
-// TSA GIẢ LẬP (RFC 3161)
-// ==========================================
-/*app.post('/api/timestamp', (req, res) => {
-    const { documentHash } = req.body;
-    const timestamp = new Date().toISOString();
-    const timestampToken = {
-        version: 1,
-        policy: "1.3.6.1.4.1.99999.1",
-        messageImprint: { hashAlgorithm: "SHA-256", hashValue: documentHash },
-        serialNumber: Date.now(),
-        genTime: timestamp,
-        tsaName: "Mock TSA - NT219 Project"
-    };
-    const sign = crypto.createSign('RSA-SHA256');
-    sign.update(JSON.stringify(timestampToken));
-    const signature = sign.sign(fs.readFileSync(path.join(CA_DIR, 'subCA.key'), 'utf8'), 'base64');
-    res.json({ timestampToken, signature, timestamp });
-});*/
-
-// ==========================================
-// API PHÂN PHỐI PUBLIC KEY
-// ==========================================
-app.get('/api/public-key/:userId', (req, res) => {
+app.get('/api/public-key/:userId', async (req, res) => {
     const userId = req.params.userId;
     const certPath = path.join(KEYSTORE_DIR, `citizen_${userId}.crt`);
     if (fs.existsSync(certPath)) {
@@ -1914,159 +1747,21 @@ function firewallF3Middleware(req, res, next) {
 app.get('/officer', (req, res) => res.sendFile(path.join(__dirname, '../frontend/officer.html')));
 app.get('/xac-thuc', (req, res) => res.sendFile(path.join(__dirname, '../frontend/xac-thuc.html')));
 app.get('/bank', (req, res) => res.redirect('/xac-thuc'));
-// [BỔ SUNG] API lấy danh sách hồ sơ của tôi
-app.get('/api/my-requests/:userId', (req, res) => {
+
+app.get('/api/my-requests/:userId', async (req, res) => {
     const userId = req.params.userId;
-    // Lọc trong bộ nhớ cache những file thuộc về người dùng đang đăng nhập
-    const myRequests = Object.entries(pdfCache)
-        .filter(([id, file]) => file.ownerId === userId)
-        .map(([id, file]) => ({
-            fileId: id,
-            fileName: file.name,
-            hash: file.hash, // Trả về hash để client gửi lại khi gọi lệnh ký
-            status: file.status || 'PENDING',
-            rejectReason: file.rejectReason || '',
-            downloadUrl: file.downloadUrl || '',
-            downloadUrlSig: file.downloadUrlSig || ''
-        }));
+    const rows = await dbAll("SELECT * FROM pdf_cache WHERE ownerId = ?", [userId]);
+    const myRequests = rows.map(file => ({
+        fileId: file.fileId,
+        fileName: file.name,
+        hash: file.hash,
+        status: file.status || 'PENDING',
+        rejectReason: file.rejectReason || '',
+        downloadUrl: file.downloadUrl || '',
+        downloadUrlSig: file.downloadUrlSig || ''
+    }));
     res.json(myRequests);
 });
-
-// ==========================================
-// API TẠO PDF TỪ FORM CT07
-// ==========================================
-app.post('/api/create-ct07', async (req, res) => {
-    const { userId, mucDich, email, phone, ghiChu } = req.body;
-    const citizen = users[userId];
-
-    if (!citizen || citizen.role !== "Citizen") {
-        return res.status(403).json({
-            status: "FAILED",
-            message: "Tài khoản công dân không hợp lệ!"
-        });
-    }
-
-    const hoTen = citizen.hoTen || citizen.name;
-    const cccd = citizen.cccd || userId;
-    const ngaySinh = citizen.ngaySinh || "";
-    const gioiTinh = citizen.gioiTinh || "";
-    const noiThuongTru = citizen.noiThuongTru || "";
-
-    try {
-        const pdfDoc = await PDFDocument.create();
-        const page = pdfDoc.addPage([595, 842]);
-        const { width, height } = page.getSize();
-
-        // Dùng font Helvetica (không dấu)
-        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-        // Tiêu đề - Không dấu để tránh lỗi encode
-        page.drawText('CONG HOA XA HOI CHU NGHIA VIET NAM', {
-            x: 50, y: height - 50, size: 14, font: fontBold
-        });
-        page.drawText('Doc lap - Tu do - Hanh phuc', {
-            x: 50, y: height - 70, size: 12, font: fontBold
-        });
-
-        page.drawText('GIAY XAC NHAN THONG TIN VE CU TRU', {
-            x: 50, y: height - 120, size: 16, font: fontBold
-        });
-        page.drawText('(Cap tu he thong dich vu cong)', {
-            x: 50, y: height - 140, size: 11, font: font
-        });
-
-        const boDau = (str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
-
-        const lines = [
-            `Ho va ten: ${boDau(hoTen)}`,
-            `So CCCD/CMND: ${boDau(cccd)}`,
-            `Ngay sinh: ${formatDateVN(ngaySinh)}`,
-            `Gioi tinh: ${boDau(gioiTinh)}`,
-            `Noi thuong tru: ${boDau(noiThuongTru)}`,
-            `Muc dich xin cap: ${boDau(mucDich)}`,
-            '',
-            'Xac nhan cua Co quan Cong an phuong...',
-            '',
-            '',
-            'Nguoi xac nhan',
-            '(Ky, ghi ro ho ten)'
-        ];
-
-        let yPos = height - 180;
-        for (const line of lines) {
-            page.drawText(line, {
-                x: 50, y: yPos, size: 12, font: font
-            });
-            yPos -= 25;
-        }
-
-        const pdfBuffer = Buffer.from(await pdfDoc.save());
-        const fileId = Date.now().toString();
-        const hash = crypto.createHash('sha256').update(pdfBuffer).digest('hex');
-
-        pdfCache[fileId] = {
-            buffer: pdfBuffer,
-            name: `XacNhanCuTru_${cccd.replace(/\s/g, '')}.pdf`,
-            hash: hash,
-            ownerId: userId,
-            status: "PENDING",
-            hoTen: hoTen || '',
-            cccd: cccd || '',
-            noiThuongTru: noiThuongTru || '',
-            ngaySinh: ngaySinh || '',
-            gioiTinh: gioiTinh || '',
-            mucDich: mucDich || '',
-            email: email || citizen.email || '',
-            phone: phone || citizen.phone || '',
-            ghiChu: ghiChu || '',
-            ngayGui: nowVN()
-        };
-
-        logAudit(userId, "CREATE_RESIDENCE_REQUEST", `Tao ho so xac nhan cu tru cho ${hoTen}`);
-        res.json({
-            fileId,
-            fileName: `XacNhanCuTru_${cccd.replace(/\s/g, '')}.pdf`,
-            hash: hash
-        });
-
-    } catch (e) {
-        console.error("Loi tao PDF:", e);
-        res.status(500).json({ status: "FAILED", message: "Loi tao file PDF!" });
-    }
-});
-
-// ==========================================
-// 1. TSA GIẢ LẬP (MOCK TIMESTAMPING AUTHORITY - RFC 3161)
-// ==========================================
-/*app.post('/api/timestamp', (req, res) => {
-    const { documentHash } = req.body;
-    
-    if (!documentHash) {
-        return res.status(400).json({ 
-            status: "REJECTED", 
-            error: "Thiếu thông tin documentHash để đóng dấu thời gian!" 
-        });
-    }
-
-    const currentTime = new Date().toISOString();
-    
-    // Giả lập TSA Server ký số lên gói tin thời gian bằng thuật toán HMAC-SHA256
-    const tsaSignatureToken = crypto
-        .createHmac('sha256', 'SECRET_TSA_PRIVATE_KEY_NT219')
-        .update(`${documentHash}|${currentTime}`)
-        .digest('hex');
-
-    // Phản hồi đúng cấu trúc đặc tả dịch vụ cấp dấu thời gian
-    res.json({
-        status: "GRANTED",
-        policy: "1.3.6.1.4.1.4146.2.2", // OID giả lập của TSA
-        timestamp: currentTime,
-        serialNumber: Date.now().toString(),
-        tsaToken: tsaSignatureToken,
-        hashAlgorithm: "SHA-256"
-    });
-});*/
 
 const https = require('https');
 const keyPathSSL = path.join(__dirname, 'server.key');
@@ -2089,9 +1784,7 @@ if (!isHttpOnly && fs.existsSync(keyPathSSL) && fs.existsSync(certPathSSL)) {
     serverOptions.cert = fs.readFileSync(certPathSSL);
 }
 
-const server = serverOptions.key 
-    ? https.createServer(serverOptions, app) 
-    : app;
+const server = serverOptions.key ? https.createServer(serverOptions, app) : app;
 
 server.listen(port, () => {
     const protocol = serverOptions.key ? 'https' : 'http';
