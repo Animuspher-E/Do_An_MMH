@@ -70,7 +70,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/opa run --server --addr=127.0.0.1:8181 \"$SCRIPT_DIR/portal/policies\"
+ExecStart=/usr/local/bin/opa run --server --addr=127.0.0.1:8181 $SCRIPT_DIR/portal/policies
 Restart=on-failure
 
 [Install]
@@ -79,7 +79,7 @@ EOF"
 
 sudo systemctl daemon-reload
 sudo systemctl enable opa
-sudo systemctl start opa
+sudo systemctl restart opa
 
 # 10. Cấu hình dịch vụ Systemd cho OCSP Responder
 echo "Configuring Systemd for OCSP Responder..."
@@ -90,8 +90,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=\"$SCRIPT_DIR\"
-ExecStart=/bin/bash \"$SCRIPT_DIR/ca-infrastructure/ocsp/start-ocsp.sh\"
+WorkingDirectory=$SCRIPT_DIR
+ExecStart=/bin/bash $SCRIPT_DIR/ca-infrastructure/ocsp/start-ocsp.sh
 Restart=on-failure
 
 [Install]
@@ -100,7 +100,7 @@ EOF"
 
 sudo systemctl daemon-reload
 sudo systemctl enable ocsp
-sudo systemctl start ocsp
+sudo systemctl restart ocsp
 
 echo "================================================================="
 echo "🎉 ĐÃ CÀI ĐẶT XONG CÁC DỊCH VỤ HẠ TẦNG (NODE, OPA, OCSP, SoftHSM) 🎉"
