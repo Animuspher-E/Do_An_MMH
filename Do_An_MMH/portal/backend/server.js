@@ -2050,7 +2050,9 @@ const https = require('https');
 const keyPathSSL = path.join(__dirname, 'server.key');
 const certPathSSL = path.join(__dirname, 'server.cert');
 
-if (!fs.existsSync(keyPathSSL) || !fs.existsSync(certPathSSL)) {
+const isHttpOnly = process.env.HTTP_ONLY === 'true';
+
+if (!isHttpOnly && (!fs.existsSync(keyPathSSL) || !fs.existsSync(certPathSSL))) {
     try {
         console.log("🔒 Đang tự động sinh chứng chỉ SSL/TLS Self-Signed cho HTTPS...");
         execSync(`openssl req -nodes -new -x509 -keyout "${keyPathSSL}" -out "${certPathSSL}" -days 365 -subj "/C=VN/O=Dev/CN=localhost"`, { stdio: 'inherit' });
@@ -2060,7 +2062,7 @@ if (!fs.existsSync(keyPathSSL) || !fs.existsSync(certPathSSL)) {
 }
 
 const serverOptions = {};
-if (fs.existsSync(keyPathSSL) && fs.existsSync(certPathSSL)) {
+if (!isHttpOnly && fs.existsSync(keyPathSSL) && fs.existsSync(certPathSSL)) {
     serverOptions.key = fs.readFileSync(keyPathSSL);
     serverOptions.cert = fs.readFileSync(certPathSSL);
 }

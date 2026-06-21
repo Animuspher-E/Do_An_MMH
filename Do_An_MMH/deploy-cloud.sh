@@ -54,8 +54,8 @@ chmod +x ca-infrastructure/setup-hsm.sh
 echo "Configuring PM2 for Node.js Server..."
 sudo npm install -g pm2
 cd "$SCRIPT_DIR/portal/backend"
-# Chạy ứng dụng thông qua PM2
-OPA_URL="http://127.0.0.1:8181" pm2 start server.js --name "node-portal"
+# Chạy ứng dụng thông qua PM2 (Sử dụng HTTP_ONLY=true để tránh tự sinh SSL trên Node khi đã dùng Nginx)
+OPA_URL="http://127.0.0.1:8181" HTTP_ONLY="true" pm2 start server.js --name "node-portal"
 pm2 save
 sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
 
