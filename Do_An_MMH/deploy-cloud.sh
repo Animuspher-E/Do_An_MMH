@@ -23,10 +23,14 @@ sudo apt-get install -y nodejs
 echo "Installing Python, OpenSSL, SoftHSM2, Nginx, Certbot, SQLite3..."
 sudo apt-get install -y python3 python3-pip python3-venv openssl softhsm2 opensc nginx certbot python3-certbot-nginx git sqlite3
 
-# 4. Tải OPA (Open Policy Agent)
-echo "Installing Open Policy Agent (OPA)..."
-sudo curl -L -o /usr/local/bin/opa https://openpolicyagent.org/downloads/v0.61.0/opa_linux_amd64_static
-sudo chmod +x /usr/local/bin/opa
+# 4. Tải OPA (Open Policy Agent) nếu chưa có
+if [ ! -f /usr/local/bin/opa ]; then
+    echo "Installing Open Policy Agent (OPA)..."
+    sudo curl -L -o /usr/local/bin/opa https://openpolicyagent.org/downloads/v0.61.0/opa_linux_amd64_static
+    sudo chmod +x /usr/local/bin/opa
+else
+    echo "Open Policy Agent (OPA) is already installed, skipping download."
+fi
 
 # 5. Thiết lập thư mục và cấu hình Node.js backend
 echo "Setting up Node.js Backend..."
