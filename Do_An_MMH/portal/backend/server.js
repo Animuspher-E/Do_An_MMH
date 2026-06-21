@@ -35,6 +35,32 @@ const port = 3000;
 const hsmConfigPath = path.join(__dirname, '../../ca-infrastructure/storage/softhsm2/softhsm2.conf');
 process.env.SOFTHSM2_CONF = hsmConfigPath;
 
+function getPythonCommand() {
+    // 1. Kiểm tra môi trường ảo venv trong portal/backend
+    const venvPythonLinux = path.join(__dirname, 'venv/bin/python');
+    const venvPythonWindows = path.join(__dirname, 'venv/Scripts/python.exe');
+    
+    if (fs.existsSync(venvPythonLinux)) {
+        return `"${venvPythonLinux}"`;
+    }
+    if (fs.existsSync(venvPythonWindows)) {
+        return `"${venvPythonWindows}"`;
+    }
+    
+    // 2. Kiểm tra venv ở thư mục cha (nếu có)
+    const parentVenvLinux = path.join(__dirname, '../../venv/bin/python');
+    const parentVenvWindows = path.join(__dirname, '../../venv/Scripts/python.exe');
+    if (fs.existsSync(parentVenvLinux)) {
+        return `"${parentVenvLinux}"`;
+    }
+    if (fs.existsSync(parentVenvWindows)) {
+        return `"${parentVenvWindows}"`;
+    }
+
+    // 3. Dự phòng theo hệ điều hành
+    return process.platform === 'win32' ? 'python' : 'python3';
+}
+
 // Tự động khởi tạo HSM nếu chưa có
 if (!fs.existsSync(hsmConfigPath)) {
     try {
@@ -1029,7 +1055,7 @@ app.post('/api/remote-sign', gatewayPEPMiddleware, opaPolicyMiddleware, async (r
             const hsmPin = '123456';
             
             console.log(`[PYTHON] Đang gọi lệnh ký HSM (Organ Seal) cho: ${signedFileName}`);
-            execSync(`python3 "${pythonScript}" "${tempPdfPath}" "${finalPdfPath}" "${hsmP12Path}" "${hsmPin}"`, { 
+            execSync(`${getPythonCommand()} "${pythonScript}" "${tempPdfPath}" "${finalPdfPath}" "${hsmP12Path}" "${hsmPin}"`, { 
                 cwd: path.join(__dirname, '../../tsp/python_core'),
                 stdio: 'inherit'
             });
@@ -1181,7 +1207,7 @@ app.post('/api/officer-remote-sign', requireDPoP, async (req, res) => {
             const hsmP12Pin = '123456';
 
             console.log(`[PYTHON] Officer đang gọi ký HSM cho: ${signedFileName}`);
-            execSync(`python3 "${pythonScript}" "${tempPdfPath}" "${finalPdfPath}" "${hsmP12Path}" "${hsmP12Pin}"`, {
+            execSync(`${getPythonCommand()} "${pythonScript}" "${tempPdfPath}" "${finalPdfPath}" "${hsmP12Path}" "${hsmP12Pin}"`, {
                 cwd: path.join(__dirname, '../../tsp/python_core'),
                 stdio: 'inherit'
             });
@@ -1323,7 +1349,7 @@ app.post('/api/verify-signature', async (req, res) => {
                 const userPin = signerUser?.certPin || 'secret';
                 
                 console.log(`[PYTHON] Đang gọi lệnh ký Local cho: ${signedFileName} bằng cert của ${userId}`);
-                execSync(`python3 "${pythonScript}" "${tempPdfPath}" "${finalPdfPath}" "${userP12Path}" "${userPin}"`, { 
+                execSync(`${getPythonCommand()} "${pythonScript}" "${tempPdfPath}" "${finalPdfPath}" "${userP12Path}" "${userPin}"`, { 
                     cwd: path.join(__dirname, '../../tsp/python_core'),
                     stdio: 'inherit'
                 });
@@ -1371,7 +1397,7 @@ async function verifyPdfPath(pdfPath, originalName) {
     let pythonOut = "";
     try {
         const pythonScript = path.join(__dirname, '../../tsp/python_core/verify_pdf.py');
-        pythonOut = execSync(`python3 "${pythonScript}" "${pdfPath}" 2>&1`).toString();
+        pythonOut = execSync(`${getPythonCommand()} "${pythonScript}" "${pdfPath}" 2>&1`).toString();
         console.log("=== PYTHON VERIFY OUTPUT ===");
         console.log(pythonOut);
         console.log("=== END PYTHON VERIFY OUTPUT ===");

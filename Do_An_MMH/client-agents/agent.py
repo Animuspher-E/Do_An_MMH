@@ -117,7 +117,7 @@ def handle_sign_request():
                 encryption_algorithm=serialization.NoEncryption()
             )
             mldsa_sig_hash = hashlib.sha256(pqc_secret + bytes.fromhex(doc_hash_hex)).hexdigest()
-            mldsa_sig = f"ML-DSA-65_FIPS-204_Signature_Value[{mldsa_sig_hash}]"
+            mldsa_sig = f"ML-DSA-65_FIPS-204_Signature_Value[{doc_hash_hex}_{mldsa_sig_hash}]"
             signature = mldsa_sig.encode('utf-8')
         else:
             # ECDSA (hoặc RSA-PSS dự phòng)

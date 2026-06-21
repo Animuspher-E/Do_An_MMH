@@ -1,5 +1,12 @@
 import sys
 import os
+
+# Cấu hình UTF-8 cho stdout/stderr để tránh lỗi UnicodeEncodeError trên Windows
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
+
 from pyhanko.pdf_utils.reader import PdfFileReader
 from pyhanko.sign.validation import ValidationContext, validate_pdf_signature
 from pyhanko.keys import load_certs_from_pemder

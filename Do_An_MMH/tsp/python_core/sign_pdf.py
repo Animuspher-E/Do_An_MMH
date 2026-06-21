@@ -2,6 +2,12 @@ import sys
 import os
 import io
 
+# Cấu hình UTF-8 cho stdout/stderr để tránh lỗi UnicodeEncodeError trên Windows
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
+
 def sign_pdf_with_p12(input_pdf_path, output_pdf_path, p12_path, p12_password):
     print(f"--- Bắt đầu ký PDF ---")
     
