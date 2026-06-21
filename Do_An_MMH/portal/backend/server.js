@@ -548,17 +548,33 @@ function hsmSignPKCS11(dataHashHex, pin = "123456") {
     ];
     let libPath = paths.find(p => fs.existsSync(p));
 
-    if (!libPath) {
-        console.warn("⚠️ fallback local key (No HSM found)");
-        const privateKeyPem = fs.readFileSync(path.join(CA_DIR, 'subCA.key'), 'utf8');
-        const sign = crypto.createSign('RSA-SHA256');
-        sign.update(Buffer.from(dataHashHex, 'hex'));
-        return sign.sign(privateKeyPem, 'base64');
+    // Kiểm tra graphene-pk11 và SoftHSM có sẵn sàng không
+    const GrapheneModule = graphene ? graphene.Module : null;
+
+    if (!libPath || !GrapheneModule) {
+        console.warn(`⚠️ Fallback soft-sign: HSM unavailable (libPath=${libPath}, graphene=${!!graphene})`);
+        // Dùng khóa riêng của subCA để ký thay thế (software fallback)
+        const subCAKeyPath = path.join(CA_DIR, 'subCA.key');
+        if (!fs.existsSync(subCAKeyPath)) {
+            throw new Error("Không tìm thấy khóa SubCA để ký dự phòng. Vui lòng chạy lại setup-hsm.sh trên máy chủ.");
+        }
+        const privateKeyPem = fs.readFileSync(subCAKeyPath, 'utf8');
+        try {
+            // Thử ký ECDSA trước (nếu subCA.key là EC key)
+            const sign = crypto.createSign('SHA256');
+            sign.update(Buffer.from(dataHashHex, 'hex'));
+            return sign.sign(privateKeyPem, 'base64');
+        } catch (e) {
+            // Fallback RSA
+            const sign = crypto.createSign('RSA-SHA256');
+            sign.update(Buffer.from(dataHashHex, 'hex'));
+            return sign.sign(privateKeyPem, 'base64');
+        }
     }
 
     let mod, session;
     try {
-        mod = Module.load(libPath, "SoftHSM");
+        mod = GrapheneModule.load(libPath, "SoftHSM");
         mod.initialize();
         const slots = mod.getSlots(true);
         let slot = null;
@@ -570,7 +586,7 @@ function hsmSignPKCS11(dataHashHex, pin = "123456") {
             } catch (e) { }
         }
 
-        if (!slot) throw new Error("Không tìm thấy slot CloudHSM");
+        if (!slot) throw new Error("Không tìm thấy slot CloudHSM trong SoftHSM. Hãy chạy lại setup-hsm.sh.");
         session = slot.open(graphene.SessionFlag.SERIAL_SESSION | graphene.SessionFlag.RW_SESSION);
 
         try { session.login(pin); } catch (e) {
@@ -579,7 +595,7 @@ function hsmSignPKCS11(dataHashHex, pin = "123456") {
 
         let privateKey = session.find({ class: graphene.ObjectClass.PRIVATE_KEY, label: "mykey" }).items(0);
         if (!privateKey) privateKey = session.find({ class: graphene.ObjectClass.PRIVATE_KEY, id: Buffer.from([0x01]) }).items(0);
-        if (!privateKey) throw new Error("Không tìm thấy private key");
+        if (!privateKey) throw new Error("Không tìm thấy private key trong slot CloudHSM");
 
         let signer;
         try {
