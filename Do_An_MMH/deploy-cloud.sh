@@ -4,6 +4,8 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "================================================================="
 echo "🚀 BẮT ĐẦU CÀI ĐẶT HỆ THỐNG KÝ SỐ TRÊN CLOUD VM (UBUNTU SERVER) 🚀"
 echo "================================================================="
@@ -28,7 +30,7 @@ sudo chmod +x /usr/local/bin/opa
 
 # 5. Thiết lập thư mục và cấu hình Node.js backend
 echo "Setting up Node.js Backend..."
-cd /home/ubuntu/Do_An_MMH/portal/backend
+cd "$SCRIPT_DIR/portal/backend"
 npm install
 
 # Xóa file SSL self-signed cũ nếu có để Node chạy HTTP cổng 3000 (Nginx sẽ xử lý HTTPS)
@@ -44,14 +46,14 @@ deactivate
 
 # 7. Cấu hình SoftHSM2 và tạo CA
 echo "Setting up SoftHSM2 and CA Authorities..."
-cd /home/ubuntu/Do_An_MMH
+cd "$SCRIPT_DIR"
 chmod +x ca-infrastructure/setup-hsm.sh
 ./ca-infrastructure/setup-hsm.sh
 
 # 8. Cấu hình PM2 để quản lý Node.js Backend
 echo "Configuring PM2 for Node.js Server..."
 sudo npm install -g pm2
-cd /home/ubuntu/Do_An_MMH/portal/backend
+cd "$SCRIPT_DIR/portal/backend"
 # Chạy ứng dụng thông qua PM2
 OPA_URL="http://127.0.0.1:8181" pm2 start server.js --name "node-portal"
 pm2 save
@@ -59,19 +61,19 @@ sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
 
 # 9. Cấu hình dịch vụ Systemd cho OPA
 echo "Configuring Systemd for OPA..."
-sudo bash -c 'cat > /etc/systemd/system/opa.service <<EOF
+sudo bash -c "cat > /etc/systemd/system/opa.service <<EOF
 [Unit]
 Description=Open Policy Agent Service
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/opa run --server --addr=127.0.0.1:8181 /home/ubuntu/Do_An_MMH/portal/policies
+ExecStart=/usr/local/bin/opa run --server --addr=127.0.0.1:8181 $SCRIPT_DIR/portal/policies
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
-EOF'
+EOF"
 
 sudo systemctl daemon-reload
 sudo systemctl enable opa
@@ -79,20 +81,20 @@ sudo systemctl start opa
 
 # 10. Cấu hình dịch vụ Systemd cho OCSP Responder
 echo "Configuring Systemd for OCSP Responder..."
-sudo bash -c 'cat > /etc/systemd/system/ocsp.service <<EOF
+sudo bash -c "cat > /etc/systemd/system/ocsp.service <<EOF
 [Unit]
 Description=OpenSSL OCSP Responder
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/ubuntu/Do_An_MMH
-ExecStart=/bin/bash /home/ubuntu/Do_An_MMH/ca-infrastructure/ocsp/start-ocsp.sh
+WorkingDirectory=$SCRIPT_DIR
+ExecStart=/bin/bash $SCRIPT_DIR/ca-infrastructure/ocsp/start-ocsp.sh
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
-EOF'
+EOF"
 
 sudo systemctl daemon-reload
 sudo systemctl enable ocsp

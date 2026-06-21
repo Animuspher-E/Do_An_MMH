@@ -843,7 +843,7 @@ function generateHSMOrganCert() {
 // Khởi tạo chứng chỉ HSM Organ ngay khi start (dùng cho organ seal)
 generateHSMOrganCert();
 
-async function embedSignatureAndSeal(pdfBuffer, userName, userId, fileId, signatureBase64, signType) {
+async function embedSignatureAndSeal(pdfBuffer, userName, userId, fileId, signatureBase64, signType, host) {
     const pdfDoc = await PDFDocument.load(pdfBuffer);
     pdfDoc.setKeywords(['Signed', `USER_${userId}`, `FILE_${fileId}`, `TYPE_${signType}`]);
     pdfDoc.setSubject(`Digitally Signed. Signature: ${signatureBase64.substring(0, 50)}...`);
@@ -872,8 +872,10 @@ Hinh thuc: ${signTypeText}
 Thuat toan: ML-DSA-65 (PQC)
 Thoi gian: ${nowVN()}`;
 
-    // Tạo nội dung mã QR (mã QR hỗ trợ tiếng Việt UTF-8 đầy đủ)
-    const qrContent = `CỔNG XÁC THỰC CHỮ KÝ SỐ QUỐC GIA\n` +
+    // Tạo nội dung mã QR (mã QR hỗ trợ tiếng Việt UTF-8 đầy đủ, kèm liên kết trực tuyến)
+    const verifyUrl = `https://${host || 'localhost:3000'}/xac-thuc?fileId=${fileId}`;
+    const qrContent = `${verifyUrl}\n\n` +
+                      `CỔNG XÁC THỰC CHỮ KÝ SỐ QUỐC GIA\n` +
                       `Người ký: ${userName}\n` +
                       `Mã cán bộ: ${userId}\n` +
                       `Hình thức: ${signTypeText}\n` +
@@ -962,10 +964,11 @@ app.get('/api/get-nonce', (req, res) => {
 
 app.post('/api/upload-pdf', upload.single('document'), (req, res) => {
     const fileId = Date.now().toString();
+    const serverHash = crypto.createHash('sha256').update(req.file.buffer).digest('hex');
     pdfCache[fileId] = {
         buffer: req.file.buffer,
         name: req.file.originalname,
-        hash: req.body.clientHash,
+        hash: req.body.clientHash || serverHash,
         ownerId: req.body.ownerId,
         status: "PENDING",
         hoTen: req.body.hoTen || '',
@@ -1084,7 +1087,8 @@ app.post('/api/remote-sign', gatewayPEPMiddleware, opaPolicyMiddleware, async (r
             fileHash: clientHash, revoked: false, type: "REMOTE"
         };
 
-        const signedPdfBuffer = await embedSignatureAndSeal(cached.buffer, user.name, userId, fileIdFinal, signatureBase64, "REMOTE");
+        const host = req.headers.host || 'localhost:3000';
+        const signedPdfBuffer = await embedSignatureAndSeal(cached.buffer, user.name, userId, fileIdFinal, signatureBase64, "REMOTE", host);
         const signedFileName = `CloudSigned_${Date.now()}.pdf`;
         const tempPdfPath = path.join(SIGNED_DIR, `temp_${signedFileName}`);
         const finalPdfPath = path.join(SIGNED_DIR, signedFileName);
@@ -1250,13 +1254,15 @@ app.post('/api/officer-remote-sign', requireDPoP, async (req, res) => {
             signerCertPath: officer.remoteCrtPath
         };
 
+        const host = req.headers.host || 'localhost:3000';
         const signedPdfBuffer = await embedSignatureAndSeal(
             cached.buffer,
             officer.name,
             officerId,
             fileId,
             signatureBase64,
-            "REMOTE"
+            "REMOTE",
+            host
         );
 
         const signedFileName = `CloudSigned_${Date.now()}.pdf`;
@@ -1402,7 +1408,8 @@ app.post('/api/verify-signature', async (req, res) => {
                 : null
         };
 
-            const signedPdfBuffer = await embedSignatureAndSeal(cached.buffer, userName, userId, fileId, signatureBase64, "LOCAL");
+            const host = req.headers.host || 'localhost:3000';
+            const signedPdfBuffer = await embedSignatureAndSeal(cached.buffer, userName, userId, fileId, signatureBase64, "LOCAL", host);
             const signedFileName = `LocalSigned_${Date.now()}.pdf`;
 
             const tempPdfPath = path.join(SIGNED_DIR, `temp_${signedFileName}`);
@@ -1434,271 +1441,275 @@ app.post('/api/verify-signature', async (req, res) => {
             cached.status = "SIGNED";
             cached.signedBy = userId;
             cached.signType = "LOCAL";
-            cached.downloadUrl = `/download-signed/${signedFileName}`;
-            cached.downloadUrlSig = downloadUrlSig;
+async function verifyPdfPath(pdfPath, originalName) {
+    let pythonOut = "";
+    try {
+        const pythonScript = path.join(__dirname, '../../tsp/python_core/verify_pdf.py');
+        pythonOut = execSync(`python3 "${pythonScript}" "${pdfPath}" 2>&1`).toString();
+        console.log("=== PYTHON VERIFY OUTPUT ===");
+        console.log(pythonOut);
+        console.log("=== END PYTHON VERIFY OUTPUT ===");
+    } catch (e) {
+        pythonOut = e.stdout ? e.stdout.toString() : e.message;
+    }
 
-            globalSignedHistory.unshift({
-                fileName: cached.name,
-                signer: userName,
-                time: nowVN(),
-                url: `/download-signed/${signedFileName}`
+    if (pythonOut.includes("Result: VALID")) {
+        const pdfDocForRegistry = await PDFDocument.load(fs.readFileSync(pdfPath));
+        const keywordsForRegistry = pdfDocForRegistry.getKeywords() || "";
+        const fileIdForRegistry = keywordsForRegistry.match(/FILE_(\w+)/)?.[1];
+
+        if (fileIdForRegistry && signatureRegistry[fileIdForRegistry]?.revoked) {
+            saveLTVArchive({
+                verify_time: new Date().toISOString(),
+                document: originalName || "uploaded.pdf",
+                signer: "UNKNOWN",
+                timestamp_valid: pythonOut.includes("Timestamp valid: True"),
+                ocsp_status: "REVOKED",
+                verification_result: "REVOKED",
+                certificate_path: signatureRegistry[fileIdForRegistry]?.signerCertPath || "N/A",
+                reason: "Signature registry marked as revoked"
             });
 
-            logAudit(userName, "SIGN_SUCCESS_LOCAL", cached.name);
+            return {
+                valid: false,
+                message: "CHỮ KÝ ĐÃ BỊ THU HỒI!\n━━━━━━━━━━━━━━━━━━━━━━\nTài liệu từng hợp lệ về mặt mật mã, nhưng chứng thư/chữ ký đã bị thu hồi trong hệ thống.\n━━━━━━━━━━━━━━━━━━━━━━"
+            };
+        }
+        
+        const signerMatch = pythonOut.match(/Người ký \(Signer\): (.*)/);
+        let signerRaw = signerMatch ? signerMatch[1].trim() : "Không rõ";
+        signerRaw = signerRaw.replace(/^Common Name:\s*/i, '');
+        const signerName = signerRaw.includes('_') ? signerRaw.split('_').slice(1).join(' ') : signerRaw;
 
-            res.json({
-                status: 'SUCCESS',
-                fileId,
-                downloadUrl: `/download-signed/${signedFileName}`,
-                downloadUrlSig
-            });
-        } else res.json({ status: 'FAILED', message: "Chữ ký giả mạo!" });
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
+        const sig = signatureRegistry[fileIdForRegistry];
+        let ocspStatusForArchive = "UNKNOWN";
+        let trustChainStatusForArchive = "UNKNOWN";
+
+        if (sig?.signerCertPath) {
+            const trustChainResult = checkTrustChain(sig.signerCertPath);
+            trustChainStatusForArchive = trustChainResult.valid ? "VALID" : "INVALID";
+
+            if (!trustChainResult.valid) {
+                saveLTVArchive({
+                    verify_time: new Date().toISOString(),
+                    document: originalName || "uploaded.pdf",
+                    signer: signerName,
+                    timestamp_valid: pythonOut.includes("Timestamp valid: True"),
+                    ocsp_status: "SKIPPED",
+                    trust_chain_status: "INVALID",
+                    verification_result: "INVALID",
+                    certificate_path: sig?.signerCertPath || "N/A"
+                });
+
+                return {
+                    valid: false,
+                    message: "TRUST CHAIN KHÔNG HỢP LỆ!\n━━━━━━━━━━━━━━━━━━━━━━\nChứng chỉ người ký không thuộc Trusted Root CA của hệ thống.\n━━━━━━━━━━━━━━━━━━━━━━"
+                };
+            }
+            const ocspResult = checkOCSP(sig.signerCertPath);
+            ocspStatusForArchive = ocspResult.status;
+
+            if (ocspResult.status === 'REVOKED') {
+                saveLTVArchive({
+                    verify_time: new Date().toISOString(),
+                    document: originalName || "uploaded.pdf",
+                    signer: signerName,
+                    timestamp_valid: pythonOut.includes("Timestamp valid: True"),
+                    ocsp_status: "REVOKED",
+                    verification_result: "REVOKED",
+                    certificate_path: sig?.signerCertPath || "N/A"
+                });
+
+                return {
+                    valid: false,
+                    message: `CHỨNG CHỈ ĐÃ BỊ THU HỒI (OCSP)!\n━━━━━━━━━━━━━━━━━━━━━━\n👤 Người ký: ${signerName}\n━━━━━━━━━━━━━━━━━━━━━━`
+                };
+            }
+
+            if (ocspResult.status === 'ERROR') {
+                return {
+                    valid: false,
+                    message: "Không kiểm tra được OCSP responder!"
+                };
+            }
+        }
+
+        const intactMatch = pythonOut.match(/Toàn vẹn dữ liệu \(Intact\): (.*)/);
+        const validMatch  = pythonOut.match(/Xác thực mật mã \(Valid\): (.*)/);
+        const intact = intactMatch ? intactMatch[1].trim() : 'Hợp lệ';
+        const valid  = validMatch  ? validMatch[1].trim()  : 'Thành công';
+
+        const formatted = `Tài liệu đã được xác thực hợp lệ!\n`
+            + `━━━━━━━━━━━━━━━━━━━━━━\n`
+            + `Toàn vẹn dữ liệu: ${intact}\n`
+            + `Xác thực mật mã:  ${valid}\n`
+            + `Người ký: ${signerName}\n`
+            + `Trạng thái chứng chỉ: Còn hiệu lực\n`
+            + `Trusted Root Chain: Hợp lệ\n`
+            + `Phương thức: pyHanko / CA nội bộ\n`
+            + `━━━━━━━━━━━━━━━━━━━━━━`;
+        
+        saveLTVArchive({
+            verify_time: new Date().toISOString(),
+            document: originalName || "uploaded.pdf",
+            signer: signerName,
+            timestamp_valid: pythonOut.includes("Timestamp valid: True"),
+            ocsp_status: ocspStatusForArchive,
+            trust_chain_status: trustChainStatusForArchive,
+            verification_result: "VALID",
+            certificate_path: sig?.signerCertPath || "N/A"
+        });
+
+        return { 
+            valid: true, 
+            signer: signerName,
+            message: formatted
+        };
+    } else if (pythonOut.includes("Result: INVALID") || pythonOut.includes("LỖI HỆ THỐNG")) {
+        const errMatch = pythonOut.match(/LỖI HỆ THỐNG KHI XÁC THỰC: (.*)/);
+        const detail = errMatch ? errMatch[1].trim() : 'Xác minh mật mã thất bại.';
+        return { valid: false, message: `Tài liệu không hợp lệ!\n━━━━━━━━━━━━━━━━━━━━━━\n${detail}\n━━━━━━━━━━━━━━━━━━━━━━` };
+    }
+
+    // Fallback nếu không khớp định dạng pyHanko
+    const pdfDoc = await PDFDocument.load(fs.readFileSync(pdfPath));
+    const keywordsStr = pdfDoc.getKeywords() || "";
+
+    if (!keywordsStr.includes('Signed')) {
+        return { valid: false, message: "FILE CHƯA ĐƯỢC KÝ HOẶC BỊ SỬA METADATA!" };
+    }
+
+    const userId = keywordsStr.match(/USER_([A-Za-z0-9_]+)/)?.[1];
+    const fileId = keywordsStr.match(/FILE_(\w+)/)?.[1];
+    const signType = keywordsStr.match(/TYPE_(\w+)/)?.[1];
+
+    if (!userId || !fileId || !signType) {
+        return { valid: false, message: "Metadata không đầy đủ hoặc bị hỏng!" };
+    }
+
+    const sig = signatureRegistry[fileId];
+    if (!sig) return { valid: false, message: "Không tìm thấy dữ liệu chữ ký trên hệ thống (Registry)!" };
+
+    if (sig.revoked) return { valid: false, message: `Tài liệu này đã bị thu hồi do có phiên bản Ký ${signType} mới hơn thay thế!` };
+    if (sig.userId !== userId) return { valid: false, message: "Không khớp ID người ký!" };
+
+    const isRevoked = getRevokedList().find(i => i.userId === userId);
+    if (isRevoked) return { valid: false, message: `CHỨNG CHỈ ĐÃ BỊ THU HỒI!\n👤 ${isRevoked.name}\n⏰ ${isRevoked.revokedAt}` };
+
+    let isValidSignature = false;
+    try {
+        const decodedSig = Buffer.from(sig.signature, 'base64').toString('utf8');
+        if (decodedSig.startsWith("ML-DSA-65_FIPS-204_")) {
+            isValidSignature = decodedSig.includes(sig.fileHash);
+        } else {
+            const digest = Buffer.from(sig.fileHash, 'hex');
+            if (signType === "REMOTE") {
+                const publicKeyPem = getPublicKeyPEM();
+                const pubKey = crypto.createPublicKey(publicKeyPem);
+                if (pubKey.type === 'rsa') {
+                    isValidSignature = crypto.verify(
+                        null,
+                        digest,
+                        {
+                            key: publicKeyPem,
+                            padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
+                            saltLength: 32
+                        },
+                        Buffer.from(sig.signature, 'base64')
+                    );
+                } else if (pubKey.type === 'ec') {
+                    isValidSignature = crypto.verify(
+                        null,
+                        digest,
+                        publicKeyPem,
+                        Buffer.from(sig.signature, 'base64')
+                    );
+                }
+            } else if (signType === "LOCAL") {
+                if (!sig.certificatePEM) {
+                    return { valid: false, message: "Không tìm thấy chứng chỉ của người ký trong hệ thống!" };
+                }
+                const cleanCertPem = sig.certificatePEM.trim();
+                const pubKey = crypto.createPublicKey(cleanCertPem);
+                if (pubKey.type === 'rsa') {
+                    isValidSignature = crypto.verify(
+                        null,
+                        digest,
+                        {
+                            key: cleanCertPem,
+                            padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
+                            saltLength: 32
+                        },
+                        Buffer.from(sig.signature, 'base64')
+                    );
+                } else if (pubKey.type === 'ec') {
+                    isValidSignature = crypto.verify(
+                        null,
+                        digest,
+                        cleanCertPem,
+                        Buffer.from(sig.signature, 'base64')
+                    );
+                }
+            }
+        }
+    } catch (cryptoErr) {
+        console.error("Lỗi Crypto Verify:", cryptoErr);
+        return { valid: false, message: "Lỗi giải mã chữ ký!" };
+    }
+
+    if (!isValidSignature) {
+        return { valid: false, message: "Xác minh mật mã thất bại! Dữ liệu có thể đã bị can thiệp." };
+    }
+
+    return {
+        valid: true,
+        message: `✔️ Tài liệu hợp lệ (Phương thức: ${signType})\nKhông bị thu hồi và toàn vẹn dữ liệu.`,
+        signer: `${users[userId]?.name || "Unknown"} (${userId})`
+    };
+}
 
 app.post('/api/verify-only', upload.single('document'), async (req, res) => {
     try {
         const tempVerifyPath = path.join(__dirname, 'temp_verify_' + Date.now() + '.pdf');
         fs.writeFileSync(tempVerifyPath, req.file.buffer);
-        let pythonOut = "";
+        const result = await verifyPdfPath(tempVerifyPath, req.file.originalname);
         try {
-            const pythonScript = path.join(__dirname, '../../tsp/python_core/verify_pdf.py');
-            // Chuyển hướng stderr sang stdout để backend bắt được lỗi traceback từ python
-            pythonOut = execSync(`python3 "${pythonScript}" "${tempVerifyPath}" 2>&1`).toString();
-            console.log("=== PYTHON VERIFY OUTPUT ===");
-            console.log(pythonOut);
-            console.log("=== END PYTHON VERIFY OUTPUT ===");
-        } catch (e) {
-            pythonOut = e.stdout ? e.stdout.toString() : e.message;
-        }
-        fs.unlinkSync(tempVerifyPath);
-        
-        if (pythonOut.includes("Result: VALID")) {
-            const pdfDocForRegistry = await PDFDocument.load(req.file.buffer);
-            const keywordsForRegistry = pdfDocForRegistry.getKeywords() || "";
-            const fileIdForRegistry = keywordsForRegistry.match(/FILE_(\w+)/)?.[1];
-
-            if (fileIdForRegistry && signatureRegistry[fileIdForRegistry]?.revoked) {
-    saveLTVArchive({
-        verify_time: new Date().toISOString(),
-        document: req.file?.originalname || "uploaded.pdf",
-        signer: "UNKNOWN",
-        timestamp_valid: pythonOut.includes("Timestamp valid: True"),
-        ocsp_status: "REVOKED",
-        verification_result: "REVOKED",
-        certificate_path: signatureRegistry[fileIdForRegistry]?.signerCertPath || "N/A",
-        reason: "Signature registry marked as revoked"
-    });
-
-    return res.json({
-        valid: false,
-        message: "CHỮ KÝ ĐÃ BỊ THU HỒI!\n━━━━━━━━━━━━━━━━━━━━━━\nTài liệu từng hợp lệ về mặt mật mã, nhưng chứng thư/chữ ký đã bị thu hồi trong hệ thống.\n━━━━━━━━━━━━━━━━━━━━━━"
-    });
-}
-     const signerMatch = pythonOut.match(/Người ký \(Signer\): (.*)/);
-     let signerRaw = signerMatch ? signerMatch[1].trim() : "Không rõ";
-     // Làm sạch tên: bỏ "Common Name: " và lấy phần sau dấu "_" nếu có
-     signerRaw = signerRaw.replace(/^Common Name:\s*/i, '');
-     const signerName = signerRaw.includes('_') ? signerRaw.split('_').slice(1).join(' ') : signerRaw;
-
-     // ===== THÊM ĐOẠN KIỂM TRA CRL TRƯỚC KHI TRẢ VỀ VALID =====
-     // Trích xuất userId từ signerRaw (định dạng "userId_tên")
-     const sig = signatureRegistry[fileIdForRegistry];
-     let ocspStatusForArchive = "UNKNOWN";
-     let trustChainStatusForArchive = "UNKNOWN";
-
-     if (sig?.signerCertPath) {
-        const trustChainResult = checkTrustChain(sig.signerCertPath);
-        trustChainStatusForArchive =
-             trustChainResult.valid ? "VALID" : "INVALID";
-
-if (!trustChainResult.valid) {
-
-    saveLTVArchive({
-        verify_time: new Date().toISOString(),
-        document: req.file?.originalname || "uploaded.pdf",
-        signer: signerName,
-        timestamp_valid: pythonOut.includes("Timestamp valid: True"),
-        ocsp_status: "SKIPPED",
-        trust_chain_status: "INVALID",
-        verification_result: "INVALID",
-        certificate_path: sig?.signerCertPath || "N/A"
-    });
-
-    return res.json({
-        valid: false,
-        message:
-            "TRUST CHAIN KHÔNG HỢP LỆ!\n" +
-            "━━━━━━━━━━━━━━━━━━━━━━\n" +
-            "Chứng chỉ người ký không thuộc Trusted Root CA của hệ thống.\n" +
-            "━━━━━━━━━━━━━━━━━━━━━━"
-    });
-}
-         const ocspResult = checkOCSP(sig.signerCertPath);
-         ocspStatusForArchive = ocspResult.status;
-
-    if (ocspResult.status === 'REVOKED') {
-    saveLTVArchive({
-        verify_time: new Date().toISOString(),
-        document: req.file?.originalname || "uploaded.pdf",
-        signer: signerName,
-        timestamp_valid: pythonOut.includes("Timestamp valid: True"),
-        ocsp_status: "REVOKED",
-        verification_result: "REVOKED",
-        certificate_path: sig?.signerCertPath || "N/A"
-    });
-
-    return res.json({
-        valid: false,
-        message: `CHỨNG CHỈ ĐÃ BỊ THU HỒI (OCSP)!\n━━━━━━━━━━━━━━━━━━━━━━\n👤 Người ký: ${signerName}\n━━━━━━━━━━━━━━━━━━━━━━`
-    });
-}
-
-    if (ocspResult.status === 'ERROR') {
-        return res.json({
-            valid: false,
-            message: "Không kiểm tra được OCSP responder!"
-        });
-    }
-}
-
-     // ===== HẾT ĐOẠN KIỂM TRA CRL =====
-
-     const intactMatch = pythonOut.match(/Toàn vẹn dữ liệu \(Intact\): (.*)/);
-     const validMatch  = pythonOut.match(/Xác thực mật mã \(Valid\): (.*)/);
-     const intact = intactMatch ? intactMatch[1].trim() : 'Hợp lệ';
-     const valid  = validMatch  ? validMatch[1].trim()  : 'Thành công';
-
-     const formatted = `Tài liệu đã được xác thực hợp lệ!\n`
-    + `━━━━━━━━━━━━━━━━━━━━━━\n`
-    + `Toàn vẹn dữ liệu: ${intact}\n`
-    + `Xác thực mật mã:  ${valid}\n`
-    + `Người ký: ${signerName}\n`
-    + `Trạng thái chứng chỉ: Còn hiệu lực\n`
-    + `Trusted Root Chain: Hợp lệ\n`
-    + `Phương thức: pyHanko / CA nội bộ\n`
-    + `━━━━━━━━━━━━━━━━━━━━━━`;
-    saveLTVArchive({
-    verify_time: new Date().toISOString(),
-    document: req.file?.originalname || "uploaded.pdf",
-    signer: signerName,
-    timestamp_valid: pythonOut.includes("Timestamp valid: True"),
-    ocsp_status: ocspStatusForArchive,
-    trust_chain_status: trustChainStatusForArchive,
-    verification_result: "VALID",
-    certificate_path: sig?.signerCertPath || "N/A"
-    });
-     return res.json({ 
-         valid: true, 
-         signer: signerName,
-         message: formatted
-     });
-        } 
-	else if (pythonOut.includes("Result: INVALID") || pythonOut.includes("LỖI HỆ THỐNG")) {
-             const errMatch = pythonOut.match(/LỖI HỆ THỐNG KHI XÁC THỰC: (.*)/);
-             const detail = errMatch ? errMatch[1].trim() : 'Xác minh mật mã thất bại.';
-             return res.json({ valid: false, message: `Tài liệu không hợp lệ!\n━━━━━━━━━━━━━━━━━━━━━━\n${detail}\n━━━━━━━━━━━━━━━━━━━━━━` });
-        }
-
-        const pdfDoc = await PDFDocument.load(req.file.buffer);
-        const keywordsStr = pdfDoc.getKeywords() || "";
-
-        if (!keywordsStr.includes('Signed')) {
-            return res.json({ valid: false, message: "FILE CHƯA ĐƯỢC KÝ HOẶC BỊ SỬA METADATA!" });
-        }
-
-        const userId = keywordsStr.match(/USER_([A-Za-z0-9_]+)/)?.[1];
-        const fileId = keywordsStr.match(/FILE_(\w+)/)?.[1];
-        const signType = keywordsStr.match(/TYPE_(\w+)/)?.[1];
-
-        if (!userId || !fileId || !signType) {
-            return res.json({ valid: false, message: "Metadata không đầy đủ hoặc bị hỏng!" });
-        }
-
-        const sig = signatureRegistry[fileId];
-        if (!sig) return res.json({ valid: false, message: "Không tìm thấy dữ liệu chữ ký trên hệ thống (Registry)!" });
-
-        if (sig.revoked) return res.json({ valid: false, message: `Tài liệu này đã bị thu hồi do có phiên bản Ký ${signType} mới hơn thay thế!` });
-        if (sig.userId !== userId) return res.json({ valid: false, message: "Không khớp ID người ký!" });
-
-        const isRevoked = getRevokedList().find(i => i.userId === userId);
-        if (isRevoked) return res.json({ valid: false, message: `CHỨNG CHỈ ĐÃ BỊ THU HỒI!\n👤 ${isRevoked.name}\n⏰ ${isRevoked.revokedAt}` });
-
-        let isValidSignature = false;
-        try {
-            const decodedSig = Buffer.from(sig.signature, 'base64').toString('utf8');
-            if (decodedSig.startsWith("ML-DSA-65_FIPS-204_")) {
-                // Xác minh chữ ký giả lập ML-DSA kháng lượng tử
-                isValidSignature = decodedSig.includes(sig.fileHash);
-            } else {
-                const digest = Buffer.from(sig.fileHash, 'hex');
-                if (signType === "REMOTE") {
-                    const publicKeyPem = getPublicKeyPEM();
-                    const pubKey = crypto.createPublicKey(publicKeyPem);
-                    if (pubKey.type === 'rsa') {
-                        isValidSignature = crypto.verify(
-                            null,
-                            digest,
-                            {
-                                key: publicKeyPem,
-                                padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-                                saltLength: 32
-                            },
-                            Buffer.from(sig.signature, 'base64')
-                        );
-                    } else if (pubKey.type === 'ec') {
-                        isValidSignature = crypto.verify(
-                            null,
-                            digest,
-                            publicKeyPem,
-                            Buffer.from(sig.signature, 'base64')
-                        );
-                    }
-                } else if (signType === "LOCAL") {
-                    if (!sig.certificatePEM) {
-                        return res.json({ valid: false, message: "Không tìm thấy chứng chỉ của người ký trong hệ thống!" });
-                    }
-                    const cleanCertPem = sig.certificatePEM.trim();
-                    const pubKey = crypto.createPublicKey(cleanCertPem);
-                    if (pubKey.type === 'rsa') {
-                        isValidSignature = crypto.verify(
-                            null,
-                            digest,
-                            {
-                                key: cleanCertPem,
-                                padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-                                saltLength: 32
-                            },
-                            Buffer.from(sig.signature, 'base64')
-                        );
-                    } else if (pubKey.type === 'ec') {
-                        isValidSignature = crypto.verify(
-                            null,
-                            digest,
-                            cleanCertPem,
-                            Buffer.from(sig.signature, 'base64')
-                        );
-                    }
-                }
-            }
-        } catch (cryptoErr) {
-            console.error("Lỗi Crypto Verify:", cryptoErr);
-            return res.json({ valid: false, message: "Lỗi giải mã chữ ký!" });
-        }
-
-        if (!isValidSignature) {
-            return res.json({ valid: false, message: "Xác minh mật mã thất bại! Dữ liệu có thể đã bị can thiệp." });
-        }
-
-        res.json({
-            valid: true,
-            message: `✔️ Tài liệu hợp lệ (Phương thức: ${signType})\nKhông bị thu hồi và toàn vẹn dữ liệu.`,
-            signer: `${users[userId]?.name || "Unknown"} (${userId})`
-        });
-
+            fs.unlinkSync(tempVerifyPath);
+        } catch (e) {}
+        return res.json(result);
     } catch (error) {
         console.error("Lỗi Verify General:", error);
         res.json({ valid: false, message: "Lỗi Verify: Không đọc được PDF hoặc hệ thống lỗi." });
+    }
+});
+
+app.get('/api/verify-by-id/:fileId', async (req, res) => {
+    try {
+        const fileId = req.params.fileId;
+        const cached = pdfCache[fileId];
+        if (!cached) {
+            return res.json({ valid: false, message: "Không tìm thấy hồ sơ/tài liệu trên hệ thống!" });
+        }
+        
+        if (cached.status !== "SIGNED") {
+            return res.json({ 
+                valid: false, 
+                message: `Hồ sơ "${cached.name}" chưa được ký số.\nTrạng thái hiện tại: ${cached.status}` 
+            });
+        }
+        
+        const signedFileName = path.basename(cached.downloadUrl);
+        const signedFilePath = path.join(SIGNED_DIR, signedFileName);
+        
+        if (!fs.existsSync(signedFilePath)) {
+            return res.json({ valid: false, message: "Không tìm thấy tệp đã ký trên máy chủ!" });
+        }
+        
+        const result = await verifyPdfPath(signedFilePath, cached.name);
+        return res.json(result);
+    } catch (error) {
+        console.error("Lỗi verify-by-id:", error);
+        res.json({ valid: false, message: "Lỗi hệ thống khi tra cứu chữ ký!" });
     }
 });
 

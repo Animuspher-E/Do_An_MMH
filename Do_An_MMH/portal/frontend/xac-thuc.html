@@ -147,6 +147,76 @@
                 </div>`;
         }
     }
+
+    // Tự động chạy khi tải trang nếu có tham số fileId trên URL
+    window.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileId = urlParams.get('fileId');
+        if (fileId) {
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('resultContainer').innerHTML = '';
+            try {
+                const res = await fetch(`/api/verify-by-id/${encodeURIComponent(fileId)}`);
+                const data = await res.json();
+                document.getElementById('spinner').style.display = 'none';
+                if (data.valid) {
+                    document.getElementById('resultContainer').innerHTML = `
+                        <div class="result-box result-valid">
+                            <div class="result-icon">✔️</div>
+                            <h3 style="border-bottom:none; color:#117864; justify-content:center; margin-bottom:5px;">VĂN BẢN HỢP LỆ VÀ TOÀN VẸN</h3>
+                            <p style="font-size:13px; color:#16a085; margin-bottom:15px;">Chữ ký số hợp lệ và chứng thư số được tin cậy</p>
+                            <table class="detail-table">
+                                <tr>
+                                    <td>Chủ thể ký số</td>
+                                    <td><strong>${data.signer||'N/A'}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Trạng thái xác minh</td>
+                                    <td>${(data.message||'Tài liệu hợp lệ').replaceAll('\n','<br>')}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tính hiệu lực pháp lý</td>
+                                    <td><span class="badge badge-success">Đầy đủ giá trị pháp lý</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Kết luận hệ thống</td>
+                                    <td style="color:#27ae60; font-weight:600;">Văn bản gốc toàn vẹn, không bị sửa đổi kể từ thời điểm ký.</td>
+                                </tr>
+                            </table>
+                        </div>`;
+                } else {
+                    document.getElementById('resultContainer').innerHTML = `
+                        <div class="result-box result-invalid">
+                            <div class="result-icon">❌</div>
+                            <h3 style="border-bottom:none; color:#922b21; justify-content:center; margin-bottom:5px;">VĂN BẢN KHÔNG HỢP LỆ HOẶC ĐÃ BỊ SỬA ĐỔI</h3>
+                            <p style="font-size:13px; color:#c0392b; margin-bottom:15px;">Chữ ký số không hợp lệ hoặc chứng thư số đã hết hạn/bị thu hồi</p>
+                            <table class="detail-table">
+                                <tr>
+                                    <td>Chi tiết lỗi</td>
+                                    <td>${(data.message||'Tài liệu không hợp lệ!').replaceAll('\n','<br>')}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tính hiệu lực pháp lý</td>
+                                    <td><span class="badge badge-danger">Không có giá trị pháp lý</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Kết luận hệ thống</td>
+                                    <td style="color:#c0392b; font-weight:600;">Từ chối tiếp nhận tài liệu này trên toàn hệ thống.</td>
+                                </tr>
+                            </table>
+                        </div>`;
+                }
+            } catch (e) {
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('resultContainer').innerHTML = `
+                    <div class="result-box result-invalid">
+                        <div class="result-icon">⚠️</div>
+                        <h3>LỖI KẾT NỐI HỆ THỐNG XÁC THỰC</h3>
+                        <p>Không thể kết nối đến máy chủ xác thực chữ ký số công cộng. Vui lòng kiểm tra lại mạng.</p>
+                    </div>`;
+            }
+        }
+    });
 </script>
 </body>
 </html>

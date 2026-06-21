@@ -32,6 +32,8 @@
         .note-box { background:#eaf4ff; border-left:4px solid #2980b9; padding:12px 15px; border-radius:6px; color:#345; font-size:13px; line-height:1.5; margin-bottom:15px; }
         .section-title { margin: 5px 0 15px; color:#1a5276; font-size:14px; font-weight:700; }
         .hidden { display: none; }
+        .upload-zone { border: 2.5px dashed #2980b9; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; background: #fafbfc; transition: all 0.3s; }
+        .upload-zone:hover { background: #ebf5fb; border-color: #1a5276; }
     </style>
 </head>
 <body>
@@ -54,41 +56,24 @@
         <div class="card">
             <h3>Quy trình xử lý hồ sơ</h3>
             <div class="note-box">
-                Công dân đăng nhập bằng tài khoản định danh. Các thông tin định danh được lấy từ CSDL dân cư mô phỏng và không cho chỉnh sửa. Công dân chỉ gửi yêu cầu xác nhận thông tin cư trú; cán bộ thẩm định, phê duyệt và ký số bằng USB Token hoặc ký từ xa qua HSM.
+                Công dân đăng nhập bằng tài khoản định danh, sau đó tải lên tài liệu PDF cần ký số từ máy tính. Cán bộ thẩm định sẽ kiểm tra nội dung, thực hiện phê duyệt và tiến hành ký số trực tiếp lên chính tài liệu đã tải lên này.
             </div>
         </div>
 
         <div class="card">
-            <h3>Tạo Yêu cầu Xác nhận Thông tin Cư trú</h3>
-
-            <div class="section-title">I. Thông tin định danh từ CSDL dân cư</div>
-            <div class="form-row">
-                <div class="form-group"><label>Họ và tên</label><input type="text" id="hoTen" readonly></div>
-                <div class="form-group"><label>Số CCCD</label><input type="text" id="cccd" readonly></div>
+            <h3>Tải lên tài liệu cần Ký số</h3>
+            <p style="font-size: 13.5px; color: #666; margin-bottom: 20px; line-height: 1.5;">
+                Tải lên tệp văn bản PDF từ máy tính của bạn (đơn xin xác nhận, tờ khai, văn bản hành chính...) để gửi lên hệ thống. Cán bộ thẩm định sẽ kiểm tra, phê duyệt và tiến hành ký số trực tiếp lên tài liệu của bạn.
+            </p>
+            <div class="upload-zone" onclick="document.getElementById('pdfFileInput').click()">
+                <div style="font-size: 40px; margin-bottom: 12px;">📂</div>
+                <div style="font-weight: 600; color: #2980b9;" id="uploadStatusText">Chọn tài liệu PDF từ máy tính</div>
+                <div style="font-size: 11px; color: #7f8c8d; margin-top: 5px;">Hỗ trợ định dạng PDF (Tối đa 20MB)</div>
+                <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;" onchange="onFileSelected()">
             </div>
-            <div class="form-row">
-                <div class="form-group"><label>Ngày sinh</label><input type="date" id="ngaySinh" readonly></div>
-                <div class="form-group"><label>Giới tính</label><input type="text" id="gioiTinh" readonly></div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary btn-block" onclick="taiLenTaiLieu()" id="btnUpload">GỬI HỒ SƠ YÊU CẦU KÝ SỐ</button>
             </div>
-            <div class="form-group"><label>Nơi thường trú</label><input type="text" id="noiThuongTru" readonly></div>
-
-            <div class="section-title">II. Thông tin yêu cầu xác nhận cư trú</div>
-            <div class="form-group">
-                <label>Mục đích sử dụng</label>
-                <select id="mucDich">
-                    <option value="Vay vốn ngân hàng">Vay vốn ngân hàng</option>
-                    <option value="Đăng ký kết hôn">Đăng ký kết hôn</option>
-                    <option value="Xin việc">Xin việc</option>
-                    <option value="Làm hồ sơ hành chính khác">Làm hồ sơ hành chính khác</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Email liên hệ</label><input type="email" id="email" placeholder="email@example.com"></div>
-                <div class="form-group"><label>Số điện thoại liên hệ</label><input type="text" id="phone" placeholder="09xxxxxxxx"></div>
-            </div>
-            <div class="form-group"><label>Ghi chú</label><textarea id="ghiChu" rows="3" placeholder="Thông tin bổ sung nếu có"></textarea></div>
-
-            <button class="btn btn-primary btn-block" onclick="taoYeuCau()">GỬI YÊU CẦU XÁC NHẬN CƯ TRÚ</button>
         </div>
 
         <div class="card">
@@ -109,14 +94,7 @@
     let autoRefreshInterval = null;
 
     function fillCitizenProfile() {
-        document.getElementById('hoTen').value = currentUser.hoTen || currentUser.name || '';
-        document.getElementById('cccd').value = currentUser.cccd || currentUser.userId || '';
-        document.getElementById('ngaySinh').value = currentUser.ngaySinh || '';
-        document.getElementById('gioiTinh').value = currentUser.gioiTinh || '';
-        document.getElementById('noiThuongTru').value = currentUser.noiThuongTru || '';
-        document.getElementById('email').value = currentUser.email || '';
-        document.getElementById('phone').value = currentUser.phone || '';
-        document.getElementById('ghiChu').value = '';
+        // Form cũ đã thay bằng tải file trực tiếp, không cần điền thông tin cư trú
     }
 
     async function login() {
@@ -142,34 +120,68 @@
         document.getElementById('userDisplay').innerHTML = '';
     }
 
-    async function taoYeuCau() {
-        if (!currentUser) return alert('Vui lòng đăng nhập!');
-        const data = {
-            userId: currentUser.userId,
-            mucDich: document.getElementById('mucDich').value,
-            email: document.getElementById('email').value.trim(),
-            phone: document.getElementById('phone').value.trim(),
-            ghiChu: document.getElementById('ghiChu').value.trim()
-        };
+    let selectedFile = null;
+    let selectedFileHash = '';
 
-        if (!data.mucDich) return alert('Vui lòng chọn mục đích sử dụng!');
+    async function onFileSelected() {
+        const fileInput = document.getElementById('pdfFileInput');
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        selectedFile = file;
+        document.getElementById('uploadStatusText').innerText = `Tài liệu đã chọn: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+        // Tính SHA-256 hash của file PDF ở client bằng Web Crypto API
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            selectedFileHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            console.log('Client-side computed PDF Hash:', selectedFileHash);
+        } catch (e) {
+            console.error('Error computing file hash:', e);
+            selectedFileHash = '';
+        }
+    }
+
+    async function taiLenTaiLieu() {
+        if (!currentUser) return alert('Vui lòng đăng nhập!');
+        if (!selectedFile) return alert('Vui lòng chọn tài liệu PDF cần ký số!');
+
+        const btn = document.getElementById('btnUpload');
+        btn.disabled = true;
+        btn.innerText = 'ĐANG GỬI HỒ SƠ...';
+
+        const formData = new FormData();
+        formData.append('document', selectedFile);
+        formData.append('clientHash', selectedFileHash);
+        formData.append('ownerId', currentUser.userId);
+        formData.append('hoTen', currentUser.hoTen || currentUser.name || '');
+        formData.append('cccd', currentUser.cccd || currentUser.userId || '');
+        formData.append('noiThuongTru', currentUser.noiThuongTru || '');
 
         try {
-            const res = await fetch('/api/create-ct07', {
+            const res = await fetch('/api/upload-pdf', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: formData
             });
             if (res.ok) {
-                alert('Hồ sơ đã được gửi! Vui lòng chờ Cán bộ thẩm định, phê duyệt và ký số.');
-                document.getElementById('ghiChu').value = '';
+                alert('Tài liệu đã được tải lên và gửi yêu cầu ký số thành công!');
+                // Reset form
+                selectedFile = null;
+                selectedFileHash = '';
+                document.getElementById('pdfFileInput').value = '';
+                document.getElementById('uploadStatusText').innerText = 'Chọn tài liệu PDF từ máy tính';
                 loadMyRequests();
             } else {
                 const err = await res.json().catch(() => ({}));
-                alert('Lỗi khi tạo hồ sơ! ' + (err.message || ''));
+                alert('Lỗi tải lên tài liệu: ' + (err.message || 'Không xác định'));
             }
         } catch (e) {
-            alert('Lỗi kết nối đến Server!');
+            alert('Lỗi kết nối đến máy chủ!');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'GỬI HỒ SƠ YÊU CẦU KÝ SỐ';
         }
     }
 
