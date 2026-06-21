@@ -20,8 +20,8 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # 3. Cài đặt các công cụ và thư viện hạ tầng
-echo "Installing Python, OpenSSL, SoftHSM2, Nginx, Certbot..."
-sudo apt-get install -y python3 python3-pip python3-venv openssl softhsm2 opensc nginx certbot python3-certbot-nginx git
+echo "Installing Python, OpenSSL, SoftHSM2, Nginx, Certbot, SQLite3..."
+sudo apt-get install -y python3 python3-pip python3-venv openssl softhsm2 opensc nginx certbot python3-certbot-nginx git sqlite3
 
 # 4. Tải OPA (Open Policy Agent)
 echo "Installing Open Policy Agent (OPA)..."
@@ -54,6 +54,8 @@ chmod +x ca-infrastructure/setup-hsm.sh
 echo "Configuring PM2 for Node.js Server..."
 sudo npm install -g pm2
 cd "$SCRIPT_DIR/portal/backend"
+# Xóa PM2 process cũ nếu tồn tại trước khi khởi chạy lại để tránh lỗi "Script already launched"
+pm2 delete node-portal || true
 # Chạy ứng dụng thông qua PM2 (Sử dụng HTTP_ONLY=true để tránh tự sinh SSL trên Node khi đã dùng Nginx)
 OPA_URL="http://127.0.0.1:8181" HTTP_ONLY="true" pm2 start server.js --name "node-portal"
 pm2 save
