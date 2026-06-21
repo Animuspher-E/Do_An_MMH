@@ -314,10 +314,13 @@ async function callOPA(input) {
             body: JSON.stringify({ input })
         });
         const data = await response.json();
-        return data.result === true;
+        if (data.result === undefined) {
+            return { allowed: false, error: "Policy path nt219/authz/allow not found in OPA" };
+        }
+        return { allowed: data.result === true, error: null };
     } catch (e) {
         console.error("[OPA] Error:", e.message);
-        return false;
+        return { allowed: false, error: `Connection failed: ${e.message}` };
     }
 }
 
@@ -1059,14 +1062,21 @@ app.post('/api/check-officer-sign-policy', async (req, res) => {
             message: "Không tìm thấy hồ sơ!"
         });
     }
-
     const action = signType === "LOCAL" ? "officer_local_sign" : "officer_remote_sign";
 
-    const opaAllow = await callOPA({
+    const { allowed: opaAllow, error: opaError } = await callOPA({
         action,
         user: { id: officerId, role: officer.role },
         file: { id: fileId, status: cached.status, ownerId: cached.ownerId }
     });
+
+    if (opaError) {
+        logAudit(officerId, "OPA_ERROR", `Lỗi kết nối OPA: ${opaError}`);
+        return res.status(500).json({
+            status: "FAILED",
+            message: `Lỗi hạ tầng chính sách (OPA): ${opaError}. Vui lòng chạy lệnh 'sudo systemctl restart opa' trên máy chủ VPS.`
+        });
+    }
 
     if (!opaAllow) {
         logAudit(officerId, "OPA_DECISION_DENY", `OPA/Rego deny ${action} - fileStatus=${cached.status}`);
@@ -1091,11 +1101,18 @@ app.post('/api/officer-remote-sign', requireDPoP, async (req, res) => {
         return res.status(404).json({ status: "FAILED", message: "Không tìm thấy hồ sơ!" });
     }
 
-    const opaAllow = await callOPA({
+    const { allowed: opaAllow, error: opaError } = await callOPA({
         action: "officer_remote_sign",
         user: { id: officerId, role: officer.role },
         file: { id: fileId, status: cached.status, ownerId: cached.ownerId }
     });
+
+    if (opaError) {
+        return res.status(500).json({
+            status: "FAILED",
+            message: `Lỗi kết nối dịch vụ chính sách OPA: ${opaError}. Vui lòng chạy lệnh 'sudo systemctl restart opa' trên máy chủ VPS.`
+        });
+    }
 
     logAudit(officerId, opaAllow ? "OPA_DECISION_ALLOW" : "OPA_DECISION_DENY", 
              opaAllow ? "OPA/Rego allow officer_remote_sign" : "OPA/Rego deny officer_remote_sign");

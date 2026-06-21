@@ -70,7 +70,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/opa run --server --addr=127.0.0.1:8181 $SCRIPT_DIR/portal/policies
+ExecStart=/usr/local/bin/opa run --server --addr=127.0.0.1:8181 \"$SCRIPT_DIR/portal/policies\"
 Restart=on-failure
 
 [Install]
@@ -90,8 +90,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=$SCRIPT_DIR
-ExecStart=/bin/bash $SCRIPT_DIR/ca-infrastructure/ocsp/start-ocsp.sh
+WorkingDirectory=\"$SCRIPT_DIR\"
+ExecStart=/bin/bash \"$SCRIPT_DIR/ca-infrastructure/ocsp/start-ocsp.sh\"
 Restart=on-failure
 
 [Install]
